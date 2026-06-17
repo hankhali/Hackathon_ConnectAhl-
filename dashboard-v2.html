@@ -7,15 +7,15 @@
   <title>ConnectAhl+ | Household Command Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            display: ['Fraunces', 'serif'],
-            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            display: ['Playfair Display', 'serif'],
+            sans: ['Inter', 'sans-serif'],
           },
           boxShadow: {
             linen: '0 15px 50px rgba(43,37,32,0.04)',
@@ -25,6 +25,18 @@
     };
   </script>
   <style>
+    :root {
+      --gold: #A8763E;
+      --gold-light: #C49A5E;
+      --gold-pale: #E8C87A;
+      --teal: #1F3A3D;
+      --teal-light: #2D5256;
+      --sand: #FDF8F0;
+      --warm-white: #FFFAF4;
+      --charcoal: #2B2520;
+      --muted: #8D857D;
+    }
+
     * {
       box-sizing: border-box;
       -webkit-font-smoothing: antialiased;
@@ -34,21 +46,55 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(168, 118, 62, 0.1), transparent 24%),
-        radial-gradient(circle at top right, rgba(31, 58, 61, 0.08), transparent 18%),
-        linear-gradient(180deg, #fffaf4 0%, #faf6f0 35%, #faf6f0 100%);
-      color: #2b2520;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      color: var(--charcoal);
+      transition: background 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
     }
 
-    .view {
-      display: none;
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.35;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 400px 400px;
+      pointer-events: none;
     }
 
-    .view.active {
-      display: block;
+    h1, h2, h3, h4, h5 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      letter-spacing: -0.02em;
     }
+
+    body.mood-energized {
+      background: linear-gradient(175deg, #FFF5E6 0%, #FDECD0 30%, #FAF3E8 70%, #F5EDE0 100%);
+      --accent: var(--gold);
+      --accent-glow: rgba(168,118,62,0.3);
+      --card-shadow: 0 8px 40px rgba(168,118,62,0.10);
+      --contrast: 1;
+    }
+    body.mood-balanced {
+      background: linear-gradient(175deg, #FFFBF5 0%, #FCF5EC 30%, #FAF6F0 70%, #F7F2EC 100%);
+      --accent: var(--gold);
+      --accent-glow: rgba(168,118,62,0.15);
+      --card-shadow: 0 6px 30px rgba(43,37,32,0.05);
+      --contrast: 1;
+    }
+    body.mood-drained {
+      background: linear-gradient(175deg, #F0EDE8 0%, #E8E4DF 30%, #F0ECE6 70%, #EDE9E3 100%);
+      --accent: #7A7A7A;
+      --accent-glow: rgba(120,120,120,0.08);
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.03);
+      --contrast: 0.8;
+      filter: saturate(var(--contrast));
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
 
     .tab-active::after {
       content: '';
@@ -58,11 +104,11 @@
       bottom: -10px;
       height: 2px;
       border-radius: 999px;
-      background: #A8763E;
+      background: var(--gold);
     }
 
     .persona-active {
-      border-color: #A8763E !important;
+      border-color: var(--gold) !important;
       box-shadow: 0 10px 24px rgba(168, 118, 62, 0.16);
       transform: translateY(-1px);
     }
@@ -76,7 +122,6 @@
       background: #e7ded2;
       transition: background 0.2s ease;
     }
-
     .switch::after {
       content: '';
       position: absolute;
@@ -87,182 +132,459 @@
       border-radius: 999px;
       background: #fff;
       box-shadow: 0 3px 8px rgba(43, 37, 32, 0.15);
-      transition: left 0.2s ease;
+      transition: left 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-
-    input:checked + .switch {
-      background: #A8763E;
-    }
-
-    input:checked + .switch::after {
-      left: 21px;
-    }
-
-    .status-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      flex-shrink: 0;
-    }
+    input:checked + .switch { background: var(--gold); }
+    input:checked + .switch::after { left: 21px; }
 
     .portal-animate {
       animation: portalFade 0.28s ease;
     }
-
     @keyframes portalFade {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    @media (max-width: 1200px) {
-      .app-grid {
-        grid-template-columns: 1fr;
-      }
+    .glass {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+    .glass-strong {
+      background: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(32px);
+      -webkit-backdrop-filter: blur(32px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+    .glass-dark {
+      background: rgba(31, 58, 61, 0.6);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
     }
 
-    @media (max-width: 1024px) {
-      .utility-sidebar {
-        position: static;
-      }
+    .hero-card-energized {
+      background: linear-gradient(135deg, #A8763E 0%, #C49A5E 50%, #E8C87A 100%);
+      color: #fff;
+    }
+    .hero-card-balanced {
+      background: linear-gradient(135deg, #1F3A3D 0%, #2D5256 100%);
+      color: #fff;
+    }
+    .hero-card-drained {
+      background: linear-gradient(135deg, #2D2A27 0%, #4A4440 100%);
+      color: #fff;
+    }
+
+    #mood-glow {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      flex-shrink: 0;
+    }
+    #mood-glow.glow-energized {
+      background: #E8C87A;
+      box-shadow: 0 0 20px rgba(232,200,122,0.5), 0 0 40px rgba(232,200,122,0.2);
+    }
+    #mood-glow.glow-balanced {
+      background: #A8763E;
+      box-shadow: 0 0 16px rgba(168,118,62,0.35), 0 0 32px rgba(168,118,62,0.12);
+    }
+    #mood-glow.glow-drained {
+      background: #7A7A7A;
+      box-shadow: 0 0 10px rgba(120,120,120,0.2);
+    }
+
+    #camera-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #camera-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    #camera-overlay .backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    #camera-overlay .frame {
+      position: relative;
+      width: 92%;
+      max-width: 1100px;
+      max-height: 90vh;
+      border-radius: 2rem;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
+    }
+
+    #main-blur {
+      transition: filter 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #main-blur.blurred {
+      filter: blur(10px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .grid-editorial {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 1.5rem;
+    }
+    .grid-editorial-wide {
+      grid-column: 1 / -1;
+    }
+
+    .editorial-card {
+      border-radius: 2rem;
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+      box-shadow: var(--card-shadow, 0 6px 30px rgba(43,37,32,0.05));
+    }
+    .editorial-card:hover {
+      transform: scale(1.015);
+    }
+    .editorial-card img {
+      width: 100%;
+      display: block;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(168,118,62,0.08), rgba(200,154,94,0.05));
+      border: 1px solid rgba(168,118,62,0.15);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--teal);
+    }
+    .status-bar .divider {
+      width: 1px;
+      height: 18px;
+      background: rgba(168,118,62,0.2);
+    }
+    .status-bar .gold-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 10px rgba(168,118,62,0.3);
+    }
+
+    .tab-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #E85D5D;
+      margin-left: 4px;
+      vertical-align: middle;
+      box-shadow: 0 0 8px rgba(232,93,93,0.5);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      background: rgba(168,118,62,0.1);
+      color: var(--gold);
+    }
+
+    .progress-gold {
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    .progress-gold .fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @media (max-width: 860px) {
+      .grid-editorial { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body class="bg-[#FAF6F0] text-[#1F3A3D]">
-  <div class="min-h-screen">
-    <header class="sticky top-0 z-50 border-b border-[#EDE4D9] bg-white/70 backdrop-blur-md">
-      <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-8 py-3.5">
-        <div class="text-lg font-extrabold tracking-[-0.03em] text-[#1F3A3D]">ConnectAhl+</div>
-
-        <div id="portal-toggle" class="flex rounded-full bg-gray-100 p-1 shadow-inner">
-          <button id="portal-toggle-parent" class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1F3A3D] shadow-sm">
-            Parent Command Center
-          </button>
-          <button id="portal-toggle-youth" class="rounded-full px-4 py-2 text-sm font-medium text-gray-400">
-            Youth Rewards Hub
-          </button>
+<body class="text-[#1F3A3D] mood-balanced">
+  <div id="main-blur" class="min-h-screen">
+    <header class="sticky top-0 z-50 border-b border-[#EDE4D9] bg-white/60 backdrop-blur-lg">
+      <div class="flex items-center justify-between gap-4 px-8 py-3">
+        <div class="flex items-center gap-5">
+          <span class="font-serif text-xl font-semibold tracking-[-0.03em] text-[#1F3A3D]" style="font-family:'Playfair Display',serif">ConnectAhl+</span>
+          <div id="parent-nav-row" class="hidden md:flex items-center gap-6">
+            <button class="nav-tab relative pb-0.5 text-sm font-medium text-[#1F3A3D] tab-active" data-view="dashboard">Journal</button>
+            <button class="nav-tab relative pb-0.5 text-sm font-medium text-[#9D958B] hover:text-[#1F3A3D] transition" data-view="rituals">Rituals</button>
+            <button class="nav-tab relative pb-0.5 text-sm font-medium text-[#9D958B] hover:text-[#1F3A3D] transition" data-view="heritage">Heritage</button>
+            <button class="nav-tab relative pb-0.5 text-sm font-medium text-[#9D958B] hover:text-[#1F3A3D] transition" data-view="majlis">Majlis</button>
+          </div>
         </div>
 
-        <div class="flex items-center justify-end gap-3">
-          <button class="flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-sm text-[#1F3A3D] shadow-linen" aria-label="Notifications">🔔</button>
-          <button id="profile-pill" class="flex items-center gap-3 rounded-full bg-[#FDFBF7] px-3.5 py-2 text-[#1F3A3D] shadow-linen">
-            <span id="profile-pill-avatar" class="flex h-7 w-7 items-center justify-center rounded-full bg-[#EDE4D9] text-xs font-bold">M</span>
-            <span id="profile-pill-name" class="text-sm font-semibold">Mariam</span>
-            <span class="text-xs text-[#8D857D]">▾</span>
+        <div id="portal-toggle" class="flex items-center gap-2 rounded-full bg-[#F5F0E8]/70 px-2 py-1">
+          <button id="portal-toggle-parent" class="rounded-full bg-white px-3.5 py-2 text-sm font-medium text-[#1F3A3D] shadow-sm">🏠</button>
+          <button id="portal-toggle-youth" class="rounded-full px-3.5 py-2 text-sm font-medium text-[#9D958B]">⭐</button>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="notification-button" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/70 text-sm text-[#1F3A3D]" aria-label="Notifications">🔔</button>
+          <button id="mood-trigger" class="flex items-center gap-2 rounded-full bg-white/70 px-3 py-2 text-sm text-[#1F3A3D]" aria-label="Household Energy">
+            <span id="mood-glow" class="glow-balanced"></span>
+          </button>
+          <button id="profile-pill" class="flex items-center gap-2 rounded-full bg-white/80 px-3 py-2 text-[#1F3A3D] shadow-sm">
+            <span id="profile-pill-avatar" class="flex h-6 w-6 items-center justify-center rounded-full bg-[#EDE4D9] text-[10px] font-bold">M</span>
+            <span id="profile-pill-name" class="text-sm font-medium">Mariam</span>
           </button>
         </div>
-      </div>
-
-      <div id="parent-nav-row" class="border-t border-[#F0E6DA] px-8 py-2.5">
-        <nav class="hidden items-center space-x-7 md:flex">
-          <button class="nav-tab relative pb-1 text-sm font-semibold text-[#1F3A3D] tab-active" data-view="dashboard">Dashboard</button>
-          <button class="nav-tab relative pb-1 text-sm font-medium text-[#9D958B]" data-view="rituals">Rituals</button>
-          <button class="nav-tab relative pb-1 text-sm font-medium text-[#9D958B]" data-view="heritage">Heritage Vault</button>
-          <button class="nav-tab relative pb-1 text-sm font-medium text-[#9D958B]" data-view="majlis">Majlis Mode</button>
-        </nav>
       </div>
     </header>
 
-    <main class="mx-auto max-w-7xl space-y-6 px-6 py-6">
-      <div id="portal-parent" class="space-y-6">
-        <section class="rounded-[2rem] bg-white/55 px-6 py-5 shadow-linen">
-          <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#A8763E]">Household Lens</p>
-              <h1 class="mt-1 text-xl font-semibold text-[#1F3A3D]">Viewing household status as</h1>
-            </div>
+    <main class="mx-auto max-w-7xl px-6 py-8">
+      <div id="portal-parent">
 
-            <div id="persona-switcher" class="flex flex-wrap items-start gap-4"></div>
-          </div>
-        </section>
-
-        <div id="view-dashboard" class="space-y-6">
-        <div id="kpi-row" class="grid gap-4 md:grid-cols-2 xl:grid-cols-4"></div>
-
-        <div class="flex flex-wrap justify-end gap-3">
-          <button id="open-event-modal" type="button" class="inline-flex items-center justify-center rounded-full bg-[#A8763E] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(168,118,62,0.22)]">
-            + Add Household Event
-          </button>
-          <button id="auto-schedule-ai" type="button" class="inline-flex items-center justify-center rounded-full border border-[#E7D7C6] bg-white px-5 py-3 text-sm font-semibold text-[#1F3A3D] shadow-sm">
-            ✨ Auto-Schedule with AI
-          </button>
-        </div>
-
-        <div class="grid items-start gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.85fr)]">
-          <div class="rounded-[2rem] bg-[#FDFBF7] p-6 shadow-linen">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#A8763E]">Weekly Schedule Table</p>
-                <h3 class="mt-2 text-lg font-semibold text-[#1F3A3D]">Upcoming rituals and gatherings</h3>
-              </div>
-              <div class="rounded-full bg-[#FAF6F0] px-3 py-1 text-xs font-semibold text-[#1F3A3D]">Sync live</div>
-            </div>
-
-            <div class="mt-5 overflow-hidden rounded-[1.5rem] border border-[#F0E6DA]">
-              <div class="grid grid-cols-[0.9fr_1.3fr_0.7fr_0.7fr] gap-3 bg-[#F8F1E8] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7B746E]">
-                <div>Day</div>
-                <div>Session</div>
-                <div>RSVP</div>
-                <div>Alerts</div>
-              </div>
-              <div id="schedule-table" class="divide-y divide-[#F0E6DA] bg-white"></div>
-            </div>
-          </div>
-
-          <div class="rounded-[2rem] bg-gradient-to-br from-[#FAF6F0] to-[#F5EBE1] p-6 shadow-linen">
-            <div class="flex items-start justify-between gap-4">
-              <div class="min-w-0">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#A8763E]">UAE Heritage & Culture Hub</p>
-                <h3 class="mt-2 text-base font-semibold text-[#1F3A3D]">✨ AI Heritage Suggestion</h3>
-                <p class="mt-3 text-sm leading-6 text-[#6A625B]">It has been 3 weeks since your last cultural activity. ConnectAhl+ suggests: Family Cooking: Traditional Al Harees.</p>
-              </div>
-              <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-[1.2rem] border border-white/70 bg-white/80 p-1">
-                <div class="flex h-full w-full items-center justify-center rounded-[0.9rem] bg-[#EADBCB] text-lg">🍲</div>
-              </div>
-            </div>
-            <ul class="mt-4 space-y-2 text-sm text-[#6A625B]">
-              <li>• Strengthens intergenerational knowledge</li>
-            </ul>
-            <button id="heritage-suggestion-button" type="button" class="mt-5 inline-flex items-center justify-center rounded-full bg-[#A8763E] px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(168,118,62,0.18)]">
-              Add to This Week's Schedule
+        <div class="flex items-center justify-between gap-6 mb-8">
+          <div class="flex items-center gap-3" id="persona-switcher"></div>
+          <div class="flex items-center gap-2">
+            <button id="open-event-modal" type="button" class="rounded-full bg-[#A8763E] px-4 py-2.5 text-sm font-medium text-white shadow-[0_8px_24px_rgba(168,118,62,0.2)]">
+              + Compose
+            </button>
+            <button id="auto-schedule-ai" type="button" class="rounded-full border border-[#E7D7C6] bg-white/60 px-4 py-2.5 text-sm font-medium text-[#1F3A3D]">
+              ✨ Suggest
             </button>
           </div>
         </div>
 
-        <div id="parent-event-board" class="hidden"></div>
+        <div id="view-dashboard">
+
+          <div id="hero-card" class="hero-card-balanced overflow-hidden rounded-[2.5rem] mb-10 shadow-2xl transition-all duration-700" style="min-height:320px">
+            <div class="relative h-full w-full p-8 sm:p-12 lg:p-16 flex flex-col justify-end" style="background:linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.08) 60%, transparent 100%)">
+              <div class="max-w-xl">
+                <p id="hero-eyebrow" class="font-serif text-sm italic text-white/70 mb-2">Tonight\u2019s Rhythm</p>
+                <h1 id="hero-headline" class="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-[-0.02em] text-white leading-[1.15]">
+                  The board games are ready.
+                </h1>
+                <p id="hero-support" class="mt-2 text-base text-white/60 max-w-lg leading-relaxed font-light">
+                  High energy tonight \u2014 the AI loaded upbeat prompts and a faster interaction flow.
+                </p>
+              </div>
+              <div id="hero-action-tiles" class="flex gap-3 mt-6"></div>
+            </div>
+          </div>
+
+          <div id="status-ribbon" class="mb-8"></div>
+
+          <div class="grid-editorial" id="dashboard-content"></div>
+
+          <div id="parent-event-board" class="hidden"></div>
+        </div>
+
+        <div id="view-rituals" class="hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem">
+            <h2 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:600;letter-spacing:-0.02em;color:#1F3A3D">Rituals</h2>
+            <span class="badge">◉ 4</span>
+          </div>
+          <div style="display:grid;gap:1.25rem;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+            <div class="editorial-card glass-strong" style="padding:1.5rem">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+                <span style="font-size:1.5rem">🍵</span>
+                <span class="badge">◉ Today</span>
+              </div>
+              <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#1F3A3D">Majlis Tea Reset</div>
+              <div style="font-size:0.8rem;color:#9D958B;margin-top:0.5rem">6:15 PM · 5 joined</div>
+              <div class="progress-gold" style="margin-top:1rem"><span class="fill" style="width:75%"></span></div>
+            </div>
+            <div class="editorial-card glass-strong" style="padding:1.5rem">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+                <span style="font-size:1.5rem">👩‍🍳</span>
+                <span class="badge">◉ Tomorrow</span>
+              </div>
+              <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#1F3A3D">Heritage Kitchen</div>
+              <div style="font-size:0.8rem;color:#9D958B;margin-top:0.5rem">Prep reminder in 90 min</div>
+              <div class="progress-gold" style="margin-top:1rem"><span class="fill" style="width:40%"></span></div>
+            </div>
+            <div class="editorial-card glass-strong" style="padding:1.5rem">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+                <span style="font-size:1.5rem">🏠</span>
+                <span class="badge">Weekend</span>
+              </div>
+              <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#1F3A3D">Open Home</div>
+              <div style="font-size:0.8rem;color:#9D958B;margin-top:0.5rem">7 RSVPs synced</div>
+              <div style="display:flex;margin-top:0.75rem;gap:0.25rem">
+                <span style="display:flex;height:1.6rem;width:1.6rem;align-items:center;justify-content:center;border-radius:50%;background:#A8763E;color:white;font-size:0.6rem;font-weight:600">A</span>
+                <span style="display:flex;height:1.6rem;width:1.6rem;align-items:center;justify-content:center;border-radius:50%;background:#1F3A3D;color:white;font-size:0.6rem;font-weight:600">K</span>
+                <span style="display:flex;height:1.6rem;width:1.6rem;align-items:center;justify-content:center;border-radius:50%;background:#6B5EA8;color:white;font-size:0.6rem;font-weight:600">S</span>
+                <span style="display:flex;height:1.6rem;width:1.6rem;align-items:center;justify-content:center;border-radius:50%;background:#9D958B;color:white;font-size:0.6rem;font-weight:600">+4</span>
+              </div>
+            </div>
+            <div class="editorial-card glass-strong" style="padding:1.5rem">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem">
+                <span style="font-size:1.5rem">📵</span>
+                <span class="badge">◉ Tonight</span>
+              </div>
+              <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#1F3A3D">Device-Free Dinner</div>
+              <div style="font-size:0.8rem;color:#9D958B;margin-top:0.5rem">45 min · 4 confirmed</div>
+              <div class="progress-gold" style="margin-top:1rem"><span class="fill" style="width:60%"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-heritage" class="hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem">
+            <h2 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:600;letter-spacing:-0.02em;color:#1F3A3D">Heritage</h2>
+            <span class="badge">◉ 3</span>
+          </div>
+          <div style="display:grid;gap:1.25rem;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))">
+            <div class="editorial-card overflow-hidden rounded-2xl glass-strong" style="cursor:pointer">
+              <img src="Gemini_Generated_Image_5icb655icb655icb.png" alt="" class="w-full h-40 object-cover transition duration-300" style="transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1)">
+              <div class="p-4">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+                  <div style="font-family:'Playfair Display',serif;font-size:1rem;color:#1F3A3D">Pearl routes</div>
+                  <span class="badge">◉ New</span>
+                </div>
+                <div style="font-size:0.8rem;color:#9D958B">Historical diving trails</div>
+                <div class="progress-gold" style="margin-top:0.75rem"><span class="fill" style="width:65%"></span></div>
+              </div>
+            </div>
+            <div class="editorial-card overflow-hidden rounded-2xl glass-strong" style="cursor:pointer">
+              <img src="Gemini_Generated_Image_6ou3tl6ou3tl6ou3.png" alt="" class="w-full h-40 object-cover transition duration-300" style="transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1)">
+              <div class="p-4">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+                  <div style="font-family:'Playfair Display',serif;font-size:1rem;color:#1F3A3D">Styleboard</div>
+                  <span class="badge">Saved</span>
+                </div>
+                <div style="font-size:0.8rem;color:#9D958B">Generational fashion</div>
+                <div class="progress-gold" style="margin-top:0.75rem"><span class="fill" style="width:90%"></span></div>
+              </div>
+            </div>
+            <div class="editorial-card overflow-hidden rounded-2xl glass-strong" style="cursor:pointer">
+              <img src="Gemini_Generated_Image_os8syaos8syaos8s.png" alt="" class="w-full h-40 object-cover transition duration-300" style="transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1)">
+              <div class="p-4">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+                  <div style="font-family:'Playfair Display',serif;font-size:1rem;color:#1F3A3D">Future archive</div>
+                  <span class="badge">Draft</span>
+                </div>
+                <div style="font-size:0.8rem;color:#9D958B">Stories for 2026</div>
+                <div class="progress-gold" style="margin-top:0.75rem"><span class="fill" style="width:25%"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-majlis" class="hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem">
+            <h2 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:600;letter-spacing:-0.02em;color:#1F3A3D">Majlis</h2>
+            <span class="badge">◉ Live</span>
+          </div>
+          <div style="display:grid;gap:1.5rem;grid-template-columns:1.3fr 0.9fr">
+            <div class="editorial-card" style="padding:2rem;background:#1F3A3D;color:white">
+              <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600">Hosting</div>
+              <div style="font-size:0.85rem;color:rgba(255,255,255,0.6);margin-top:0.5rem">Seating, arrivals, pacing</div>
+              <div style="display:flex;gap:1.5rem;margin-top:1.5rem">
+                <div><span style="font-size:1.5rem;font-weight:600">12</span><span style="margin-left:0.25rem;font-size:0.8rem;color:rgba(255,255,255,0.5)">guests</span></div>
+                <div><span style="font-size:1.5rem;font-weight:600">4</span><span style="margin-left:0.25rem;font-size:0.8rem;color:rgba(255,255,255,0.5)">here</span></div>
+                <div><span style="font-size:1.5rem;font-weight:600">8</span><span style="margin-left:0.25rem;font-size:0.8rem;color:rgba(255,255,255,0.5)">coming</span></div>
+              </div>
+            </div>
+            <div class="editorial-card glass-strong" style="padding:1.5rem">
+              <div style="display:flex;flex-direction:column;gap:1rem">
+                <div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem;margin-bottom:0.4rem">
+                    <span>Arrival</span>
+                    <span style="color:#A8763E">89%</span>
+                  </div>
+                  <div class="progress-gold"><span class="fill" style="width:89%"></span></div>
+                </div>
+                <div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem;margin-bottom:0.4rem">
+                    <span>Flow</span>
+                    <span style="color:#A8763E">93%</span>
+                  </div>
+                  <div class="progress-gold"><span class="fill" style="width:93%"></span></div>
+                </div>
+                <div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.85rem;margin-bottom:0.4rem">
+                    <span>Seating</span>
+                    <span style="color:#A8763E">72%</span>
+                  </div>
+                  <div class="progress-gold"><span class="fill" style="width:72%"></span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="portal-youth" class="hidden">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:2rem">
+            <div id="youth-tab-nav" style="display:flex;gap:0.5rem;border-radius:999px;background:rgba(245,240,232,0.6);padding:3px">
+              <button type="button" data-youth-tab="dashboard" style="border-radius:999px;background:#1F3A3D;color:white;border:none;padding:0.5rem 1rem;font-size:0.8rem;cursor:pointer">📊</button>
+              <button type="button" data-youth-tab="rituals" style="border-radius:999px;background:transparent;color:#9D958B;border:none;padding:0.5rem 1rem;font-size:0.8rem;cursor:pointer">✨</button>
+              <button type="button" data-youth-tab="adventure" style="border-radius:999px;background:transparent;color:#9D958B;border:none;padding:0.5rem 1rem;font-size:0.8rem;cursor:pointer">🏗️</button>
+              <button type="button" data-youth-tab="heritage" style="border-radius:999px;background:transparent;color:#9D958B;border:none;padding:0.5rem 1rem;font-size:0.8rem;cursor:pointer">🕌</button>
+            </div>
+            <div id="youth-range-control" style="display:flex;gap:0.25rem;border-radius:999px;background:rgba(245,240,232,0.6);padding:3px">
+              <button type="button" data-youth-range="today" style="border-radius:999px;background:#1F3A3D;color:white;border:none;padding:0.4rem 0.8rem;font-size:0.75rem;cursor:pointer;font-weight:500">Today</button>
+              <button type="button" data-youth-range="weekly" style="border-radius:999px;background:transparent;color:#9D958B;border:none;padding:0.4rem 0.8rem;font-size:0.75rem;cursor:pointer">Weekly</button>
+              <button type="button" data-youth-range="monthly" style="border-radius:999px;background:transparent;color:#9D958B;border:none;padding:0.4rem 0.8rem;font-size:0.75rem;cursor:pointer">Monthly</button>
+            </div>
+          </div>
+
+          <section id="youth-tab-dashboard"><div id="youth-dashboard-content"></div></section>
+          <section id="youth-tab-rituals" class="hidden"><div id="rituals-challenges-grid" style="display:grid;gap:1.25rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div></section>
+          <section id="youth-tab-adventure" class="hidden"><div id="adventure-day-content" style="display:flex;flex-direction:column;gap:1.5rem"></div></section>
+          <section id="youth-tab-heritage" class="hidden"><div id="heritage-vault-grid" style="display:grid;gap:1.25rem;grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div></section>
+          <div id="youth-mood-bubble" style="margin-top:1.5rem"></div>
+        </div>
 
         <div id="event-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/40 p-6 backdrop-blur-sm">
-          <div class="w-full max-w-2xl rounded-[2rem] border border-[#EFE4D8] bg-[#FAF6F0] p-6 shadow-[0_24px_80px_rgba(31,58,61,0.18)]">
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#A8763E]">Parent Administrator</p>
-                <h3 class="mt-1 text-base font-semibold text-[#1F3A3D]">Create a new household event</h3>
-              </div>
-              <button id="close-event-modal" type="button" class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1F3A3D] shadow-sm">
+          <div class="w-full max-w-lg glass-strong rounded-[2rem] p-6 sm:p-8 shadow-[0_24px_80px_rgba(31,58,61,0.18)]">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="text-2xl font-semibold tracking-[-0.03em] text-[#1F3A3D]">New event</h3>
+              <button id="close-event-modal" type="button" class="rounded-full bg-white/80 backdrop-blur-sm px-4 py-2 text-sm font-semibold text-[#1F3A3D] shadow-sm">
                 Close
               </button>
             </div>
 
-            <form id="event-form" class="mt-5 grid gap-4 lg:grid-cols-2">
+            <form id="event-form" class="space-y-5">
               <label class="block">
-                <span class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8D857D]">Event Name</span>
-                <input id="event-name" type="text" required class="mt-2 w-full rounded-[1.1rem] border border-[#E8DDD1] bg-white px-4 py-3 text-sm text-[#1F3A3D] outline-none focus:border-[#A8763E]" placeholder="Family majlis walk" />
+                <span class="text-xs font-semibold text-[#8D857D]">Name</span>
+                <input id="event-name" type="text" required class="mt-2 w-full rounded-[1.1rem] border border-[#E8DDD1] bg-white/80 px-4 py-3 text-sm text-[#1F3A3D] outline-none focus:border-[#A8763E] transition" placeholder="Family majlis walk" />
               </label>
 
               <label class="block">
-                <span class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8D857D]">Time</span>
-                <input id="event-time" type="text" required class="mt-2 w-full rounded-[1.1rem] border border-[#E8DDD1] bg-white px-4 py-3 text-sm text-[#1F3A3D] outline-none focus:border-[#A8763E]" placeholder="Thursday · 7:15 PM" />
+                <span class="text-xs font-semibold text-[#8D857D]">Time</span>
+                <input id="event-time" type="text" required class="mt-2 w-full rounded-[1.1rem] border border-[#E8DDD1] bg-white/80 px-4 py-3 text-sm text-[#1F3A3D] outline-none focus:border-[#A8763E] transition" placeholder="Thursday · 7:15 PM" />
               </label>
 
-              <label class="block lg:col-span-2">
-                <span class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8D857D]">Category</span>
-                <select id="event-category" class="mt-2 w-full rounded-[1.1rem] border border-[#E8DDD1] bg-white px-4 py-3 text-sm text-[#1F3A3D] outline-none focus:border-[#A8763E]">
+              <label class="block">
+                <span class="text-xs font-semibold text-[#8D857D]">Category</span>
+                <select id="event-category" class="mt-2 w-full rounded-[1.1rem] border border-[#E8DDD1] bg-white/80 px-4 py-3 text-sm text-[#1F3A3D] outline-none focus:border-[#A8763E] transition">
                   <option>Smart Gathering</option>
                   <option>Adventure Day Vote</option>
                   <option>Heritage Activity</option>
@@ -270,219 +592,59 @@
                 </select>
               </label>
 
-              <div class="flex flex-wrap justify-end gap-3 lg:col-span-2">
-                <button id="cancel-event-modal" type="button" class="rounded-full bg-white px-4 py-3 text-sm font-semibold text-[#1F3A3D] shadow-sm">
+              <div class="flex justify-end gap-3 pt-2">
+                <button id="cancel-event-modal" type="button" class="rounded-full bg-white/80 backdrop-blur-sm px-4 py-3 text-sm font-semibold text-[#1F3A3D] shadow-sm">
                   Cancel
                 </button>
                 <button type="submit" class="rounded-full bg-[#A8763E] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(168,118,62,0.22)]">
-                  Save Household Event
+                  Save
                 </button>
               </div>
             </form>
           </div>
         </div>
 
-        </div>
-
-        <div id="view-rituals" class="hidden space-y-6">
-        <div class="grid gap-4 md:grid-cols-3">
-          <div class="rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
-            <p class="text-[11px] uppercase tracking-[0.22em] text-[#A8763E]">Queued Ritual</p>
-            <h3 class="mt-2 text-lg font-semibold text-[#1F3A3D]">Majlis Tea Reset</h3>
-            <p class="mt-2 text-sm text-[#6A625B]">Sunday · 6:15 PM · 5 participants</p>
-          </div>
-          <div class="rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
-            <p class="text-[11px] uppercase tracking-[0.22em] text-[#A8763E]">Automation</p>
-            <h3 class="mt-2 text-lg font-semibold text-[#1F3A3D]">Heritage Kitchen Night</h3>
-            <p class="mt-2 text-sm text-[#6A625B]">Ingredients reminder fires 90 minutes before prep.</p>
-          </div>
-          <div class="rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
-            <p class="text-[11px] uppercase tracking-[0.22em] text-[#A8763E]">Invite Flow</p>
-            <h3 class="mt-2 text-lg font-semibold text-[#1F3A3D]">Open Home Gathering</h3>
-            <p class="mt-2 text-sm text-[#6A625B]">7 extended family RSVPs synced from guest list.</p>
-          </div>
-        </div>
-        </div>
-
-        <div id="view-heritage" class="hidden space-y-6">
-        <div class="grid gap-4 lg:grid-cols-3">
-          <div class="rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
-            <img src="Gemini_Generated_Image_5icb655icb655icb.png" alt="Heritage moodboard" class="h-48 w-full rounded-[1.4rem] object-cover">
-            <p class="mt-4 text-[11px] uppercase tracking-[0.22em] text-[#A8763E]">Archive Card</p>
-            <h3 class="mt-2 text-lg font-semibold text-[#1F3A3D]">Pearl routes remembered</h3>
-          </div>
-          <div class="rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
-            <img src="Gemini_Generated_Image_6ou3tl6ou3tl6ou3.png" alt="Family archive visual" class="h-48 w-full rounded-[1.4rem] object-cover">
-            <p class="mt-4 text-[11px] uppercase tracking-[0.22em] text-[#A8763E]">Voice Note</p>
-            <h3 class="mt-2 text-lg font-semibold text-[#1F3A3D]">Generational styleboard</h3>
-          </div>
-          <div class="rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
-            <img src="Gemini_Generated_Image_os8syaos8syaos8s.png" alt="Scrapbook artifact" class="h-48 w-full rounded-[1.4rem] object-cover">
-            <p class="mt-4 text-[11px] uppercase tracking-[0.22em] text-[#A8763E]">New Entry</p>
-            <h3 class="mt-2 text-lg font-semibold text-[#1F3A3D]">Future archive</h3>
-          </div>
-        </div>
-        </div>
-
-        <div id="view-majlis" class="hidden space-y-6">
-        <div class="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-          <div class="rounded-[2rem] bg-[#1F3A3D] p-6 text-white shadow-linen">
-            <p class="text-[11px] uppercase tracking-[0.22em] text-[#E1C8AA]">Majlis Mode</p>
-            <h2 class="mt-2 text-xl font-semibold">Hosting intelligence</h2>
-            <p class="mt-2 text-sm text-white/72">Track seating flow, arrivals, and hospitality pacing without leaving the dashboard.</p>
-          </div>
-          <div class="rounded-[2rem] bg-[#FDFBF7] p-6 shadow-linen">
-            <p class="text-[11px] uppercase tracking-[0.22em] text-[#A8763E]">Readiness</p>
-            <div class="mt-4 space-y-4">
-              <div>
-                <div class="mb-2 flex items-center justify-between text-sm font-semibold text-[#1F3A3D]">
-                  <span>Guest arrival pacing</span>
-                  <span>89%</span>
-                </div>
-                <div class="h-2 rounded-full bg-[#EFE5D8]"><div class="h-2 w-[89%] rounded-full bg-[#A8763E]"></div></div>
-              </div>
-              <div>
-                <div class="mb-2 flex items-center justify-between text-sm font-semibold text-[#1F3A3D]">
-                  <span>Hospitality flow</span>
-                  <span>93%</span>
-                </div>
-                <div class="h-2 rounded-full bg-[#EFE5D8]"><div class="h-2 w-[93%] rounded-full bg-[#1F3A3D]"></div></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </div>
-      </div>
-
-      <div id="portal-youth" class="hidden space-y-6">
-        <section class="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.78fr)]">
-          <div class="rounded-[2rem] bg-[#FDFBF7] p-6 shadow-linen lg:p-7">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div>
-                <div class="text-[11px] uppercase tracking-[0.22em] text-[#A8763E]">Tonight's Agenda</div>
-                <h3 class="mt-2 text-[1.85rem] font-semibold tracking-[-0.04em] text-[#1F3A3D]">Tonight's synced household checklist</h3>
-              </div>
-              <span class="inline-flex items-center rounded-full bg-[#FAF6F0] px-4 py-2 text-xs font-semibold text-[#1F3A3D]">Heritage Hub + Adventure Rituals</span>
-            </div>
-
-            <div class="mt-6 grid gap-4 sm:grid-cols-3">
-              <div class="rounded-[1.5rem] bg-[#FAF6F0] px-4 py-4">
-                <div class="text-[11px] uppercase tracking-[0.2em] text-[#8D857D]">Pending now</div>
-                <div id="youth-pending-count" class="mt-2 text-2xl font-semibold tracking-[-0.03em] text-[#1F3A3D]">3</div>
-              </div>
-              <div class="rounded-[1.5rem] bg-[#FAF6F0] px-4 py-4">
-                <div class="text-[11px] uppercase tracking-[0.2em] text-[#8D857D]">Memory unlock</div>
-                <div class="mt-2 text-sm font-semibold text-[#1F3A3D]">Camera-ready</div>
-              </div>
-              <div class="rounded-[1.5rem] bg-[#FAF6F0] px-4 py-4">
-                <div class="text-[11px] uppercase tracking-[0.2em] text-[#8D857D]">Attendance sync</div>
-                <div id="youth-attended-count" class="mt-2 text-sm font-semibold text-[#1F3A3D]">0 activities completed tonight</div>
-              </div>
-            </div>
-
-            <div id="youth-agenda-list" class="mt-6 space-y-4"></div>
-          </div>
-
-          <div class="space-y-6">
-            <section id="mood-widget" class="rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen"></section>
-
-            <section class="rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
-              <div class="flex items-center justify-between gap-3">
-                <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#A8763E]">Household Rewards Tracker</div>
-                <div class="rounded-full bg-[#FAF6F0] px-3 py-1 text-xs font-semibold text-[#A8763E]">Live</div>
-              </div>
-              <div class="mt-4 rounded-[1.8rem] border border-[#EFE4D8] bg-[linear-gradient(135deg,#FFF9F1_0%,#FAF2E6_100%)] px-5 py-5 shadow-[0_18px_45px_rgba(31,58,61,0.06)]">
-                <div class="flex items-start justify-between gap-4">
-                  <div>
-                    <h2 id="streak-display" class="text-2xl font-semibold tracking-[-0.03em] text-[#1F3A3D]">🔥 12 Day Streak</h2>
-                    <div id="current-milestone-display" class="mt-3 text-sm font-semibold text-[#1F3A3D]">2 / 3 Activities Completed</div>
-                  </div>
-                  <span id="streak-badge" class="rounded-full bg-white/80 px-3 py-1 text-xs font-semibold text-[#A8763E] shadow-sm">Momentum high</span>
-                </div>
-                <div class="mt-4 flex items-center justify-between text-[11px] uppercase tracking-[0.18em] text-[#8D857D]">
-                  <span>2 / 3 Activities</span>
-                  <span id="milestone-progress-label">66%</span>
-                </div>
-                <div class="mt-3 h-2.5 rounded-full bg-white/80">
-                  <div id="milestone-progress-bar" class="h-3 rounded-full bg-[#A8763E]" style="width: 66%;"></div>
-                </div>
-                <div id="unlock-copy" class="mt-4 text-base font-semibold text-[#1F3A3D]">Next Unlock: Vox Cinema Trip</div>
-              </div>
-            </section>
-          </div>
-        </section>
-
-        <section class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <div class="rounded-[2rem] bg-[#FDFBF7] p-6 shadow-linen">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                <p class="text-[11px] uppercase tracking-[0.22em] text-[#A8763E]">History Feed</p>
-                  <h3 class="mt-2 text-lg font-semibold text-[#1F3A3D]">Attended and completed</h3>
-              </div>
-              <span class="rounded-full bg-[#FAF6F0] px-3 py-1 text-xs font-semibold text-[#1F3A3D]">Heritage Hub + Challenges</span>
-            </div>
-
-            <div id="youth-history-list" class="mt-5 space-y-3"></div>
-          </div>
-
-          <div class="space-y-6">
-            <section class="rounded-[2rem] bg-[#FDFBF7] p-6 shadow-linen">
-              <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-[#1F3A3D]">Family Archive</h3>
-                <span class="rounded-full bg-[#FAF6F0] px-3 py-1 text-xs font-semibold text-[#1F3A3D]">Live</span>
-              </div>
-
-              <div class="mt-5 grid gap-4 sm:grid-cols-2">
-                <img src="Gemini_Generated_Image_5icb655icb655icb.png" alt="Family archive memory" class="h-72 w-full rounded-[1.5rem] object-cover">
-                <img src="Gemini_Generated_Image_6ou3tl6ou3tl6ou3.png" alt="Family archive memory" class="h-80 w-full rounded-[1.5rem] object-cover">
-                <img src="Gemini_Generated_Image_os8syaos8syaos8s.png" alt="Family archive memory" class="h-64 w-full rounded-[1.5rem] object-cover">
-                <img src="Gemini_Generated_Image_bflkaybflkaybflk.png" alt="Family archive memory" class="h-80 w-full rounded-[1.5rem] object-cover">
-              </div>
-
-              <div id="captured-moments-gallery" class="mt-4 grid gap-4 sm:grid-cols-2"></div>
-            </section>
-          </div>
-        </section>
-      </div>
     </main>
   </div>
 
-  <div id="camera-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-6">
-    <div class="relative w-full max-w-4xl">
-      <button id="close-camera-modal" type="button" class="absolute right-0 top-0 z-20 inline-flex items-center justify-center rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-white shadow-[0_18px_40px_rgba(0,0,0,0.22)] transition hover:bg-white/15">
-        X Close
-      </button>
+  <aside id="energy-panel" class="pointer-events-none fixed right-0 top-0 z-[90] h-full w-[360px] translate-x-full border-l border-white/60 bg-white/90 p-5 shadow-[0_30px_90px_rgba(31,58,61,0.18)] backdrop-blur-xl transition duration-300 ease-out">
+    <div id="energy-panel-content" class="h-full"></div>
+  </aside>
 
-      <div class="rounded-[2rem] bg-[#0F1720] p-6 text-white shadow-[0_24px_80px_rgba(15,23,32,0.45)] sm:p-7">
-        <div class="pr-24">
-          <p id="camera-modal-event-type" class="text-[11px] uppercase tracking-[0.24em] text-[#E1C8AA]">Activity Check-In</p>
-          <h2 id="camera-modal-event-name" class="mt-3 text-3xl font-semibold tracking-[-0.04em] text-white">Snap a group photo</h2>
-          <p id="camera-modal-event-time" class="mt-3 max-w-2xl text-sm leading-7 text-white/72">Capture the whole household together to confirm the activity and unlock tonight's reward.</p>
+  <div id="camera-overlay">
+    <div class="backdrop"></div>
+    <div class="frame glass-dark text-white p-6 sm:p-10">
+      <div class="flex items-start justify-between gap-6 mb-8">
+        <div class="flex-1">
+          <p id="camera-modal-event-type" class="text-xs uppercase tracking-[0.3em] text-[#E1C8AA]/80">Memory Unlock</p>
+          <h2 id="camera-modal-event-name" class="mt-3 text-4xl sm:text-5xl font-semibold tracking-[-0.04em] text-white leading-tight">Snap a group photo</h2>
+          <p id="camera-modal-event-time" class="mt-4 max-w-xl text-base leading-relaxed text-white/60">Capture the whole household together to confirm the activity and unlock tonight's reward.</p>
         </div>
-
-        <div class="mt-6 rounded-[1.7rem] border border-white/10 bg-gradient-to-br from-white/5 via-white/0 to-[#A8763E]/10 p-6">
-          <div class="relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#151F29] p-4">
-            <div class="absolute inset-x-6 top-6 h-px bg-white/15"></div>
-            <div class="absolute inset-x-6 bottom-6 h-px bg-white/15"></div>
-            <div class="absolute inset-y-6 left-6 w-px bg-white/15"></div>
-            <div class="absolute inset-y-6 right-6 w-px bg-white/15"></div>
-            <div id="camera-stage" class="relative z-10 flex min-h-[304px] flex-col items-center justify-center px-5 py-16 text-center">
-              <p class="text-[11px] uppercase tracking-[0.24em] text-[#E1C8AA]">Memory Unlock</p>
-              <h3 class="mt-4 text-3xl font-semibold tracking-[-0.03em] text-white">Snap a group photo</h3>
-              <p class="mx-auto mt-4 max-w-md text-sm leading-7 text-white/70">
-                Capture the whole family together to confirm attendance and unlock tonight's family milestone.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <p id="camera-status" class="mt-4 text-sm text-white/70">Open the camera to begin the memory challenge.</p>
-        <p id="camera-success" class="mt-4 hidden rounded-full bg-[#1C2F32] px-4 py-2 text-sm font-semibold text-[#E1C8AA]"></p>
-        <canvas id="camera-canvas" class="hidden"></canvas>
-        <button id="camera-action-button" type="button" class="mt-6 inline-flex w-full items-center justify-center rounded-full bg-[#A8763E] px-5 py-4 text-base font-semibold text-white shadow-[0_18px_35px_rgba(168,118,62,0.26)]">
-          Open Camera
+        <button id="close-camera-modal" type="button" class="shrink-0 inline-flex items-center justify-center rounded-full border border-white/10 bg-white/8 px-5 py-2.5 text-sm font-semibold text-white/70 hover:text-white hover:bg-white/15 transition">
+          Close
         </button>
       </div>
+
+      <div class="relative overflow-hidden rounded-[1.8rem] border border-white/8 bg-black/40 min-h-[340px] flex items-center justify-center">
+        <div id="camera-stage" class="flex flex-col items-center justify-center px-6 py-16 text-center w-full">
+          <div class="w-16 h-16 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-2xl mb-5">📸</div>
+          <h3 class="text-2xl sm:text-3xl font-semibold tracking-[-0.03em] text-white">Snap a group photo</h3>
+          <p class="mt-3 max-w-md text-sm leading-relaxed text-white/50">
+            Capture the whole family together to confirm attendance and advance your family milestone.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex items-center justify-between gap-4 flex-wrap">
+        <p id="camera-status" class="text-sm text-white/50">Open the camera to begin the memory challenge.</p>
+        <p id="camera-success" class="hidden rounded-full bg-white/8 px-4 py-2 text-sm font-semibold text-[#E1C8AA]"></p>
+      </div>
+
+      <canvas id="camera-canvas" class="hidden"></canvas>
+
+      <button id="camera-action-button" type="button" class="mt-6 w-full inline-flex items-center justify-center rounded-full bg-white text-[#1F3A3D] px-6 py-4 text-base font-semibold hover:bg-white/90 transition shadow-[0_18px_35px_rgba(0,0,0,0.3)]">
+        Open Camera
+      </button>
     </div>
   </div>
 
@@ -502,6 +664,24 @@
       adventureVotes: {
         louvre: 3,
         safari: 1
+      }
+    };
+
+    const heroMoodCopy = {
+      energized: {
+        eyebrow: "Tonight's Rhythm",
+        headline: 'The board games are ready. Start your match now.',
+        support: 'High energy tonight — the AI loaded upbeat prompts and a faster interaction flow.'
+      },
+      balanced: {
+        eyebrow: "Tonight's Rhythm",
+        headline: 'A steady evening with stories, voting, and one playful challenge.',
+        support: 'Mood is balanced. The AI recommends a mixed agenda with equal talk time and movement.'
+      },
+      drained: {
+        eyebrow: 'Gentle Evening',
+        headline: 'Take it easy tonight. A gentle storytelling night is ready when you are.',
+        support: 'Energy is low. The AI shifted toward a shorter ritual and softer conversation starters.'
       }
     };
 
@@ -530,7 +710,7 @@
       drained: {
         emoji: '🪫',
         label: 'Drained',
-        youthCopy: 'The AI softened tonight’s flow with calmer prompts, a shorter agenda, and gentler rewards.',
+        youthCopy: 'The AI softened tonight\u2019s flow with calmer prompts, a shorter agenda, and gentler rewards.',
         parentPrompt: 'Energy is low, so the AI shifted tonight toward a shorter ritual and softer conversation starters.',
         timingNote: 'Family energy is lower today, so the AI suggests a calmer, shorter session after everyone settles in.'
       }
@@ -725,8 +905,11 @@
       activePortal: 'parent',
       activeView: 'dashboard',
       activePersona: 'mariam',
+      activeYouthTab: 'dashboard',
+      activeYouthRange: 'today',
       eventModalOpen: false,
       cameraModalOpen: false,
+      energyPanelOpen: false,
       liveSessions: {
         mariam: false,
         hamad: false,
@@ -753,11 +936,13 @@
     }, {});
 
     const eventModal = document.getElementById('event-modal');
-    const cameraModal = document.getElementById('camera-modal');
+    const cameraOverlay = document.getElementById('camera-overlay');
+    const mainBlur = document.getElementById('main-blur');
     const eventForm = document.getElementById('event-form');
-    const moodWidget = document.getElementById('mood-widget');
-    const youthAgendaList = document.getElementById('youth-agenda-list');
-    const youthHistoryList = document.getElementById('youth-history-list');
+    const youthDashboardContent = document.getElementById('youth-dashboard-content');
+    const ritualsChallengesGrid = document.getElementById('rituals-challenges-grid');
+    const adventureDayContent = document.getElementById('adventure-day-content');
+    const heritageVaultGrid = document.getElementById('heritage-vault-grid');
     const cameraStage = document.getElementById('camera-stage');
     const cameraStatus = document.getElementById('camera-status');
     const cameraActionButton = document.getElementById('camera-action-button');
@@ -766,6 +951,12 @@
     const cameraModalEventType = document.getElementById('camera-modal-event-type');
     const cameraModalEventName = document.getElementById('camera-modal-event-name');
     const cameraModalEventTime = document.getElementById('camera-modal-event-time');
+    const youthTabViews = {
+      dashboard: document.getElementById('youth-tab-dashboard'),
+      rituals: document.getElementById('youth-tab-rituals'),
+      adventure: document.getElementById('youth-tab-adventure'),
+      heritage: document.getElementById('youth-tab-heritage')
+    };
 
     function escapeHtml(value) {
       return String(value)
@@ -915,111 +1106,208 @@
       return persona;
     }
 
+    function updateMoodTheme() {
+      const mood = getMoodState();
+      const copy = heroMoodCopy[mood.key] || heroMoodCopy.balanced;
+
+      document.body.className = document.body.className.replace(/mood-\w+/g, '').trim() + ` mood-${mood.key}`;
+
+      const hero = document.getElementById('hero-card');
+      if (hero) {
+        hero.className = hero.className.replace(/hero-card-\w+/g, '').trim() + ` hero-card-${mood.key}`;
+      }
+
+      const glow = document.getElementById('mood-glow');
+      if (glow) {
+        glow.className = glow.className.replace(/glow-\w+/g, '').trim() + ` glow-${mood.key}`;
+      }
+
+      const el = id => document.getElementById(id);
+      if (el('hero-eyebrow')) el('hero-eyebrow').textContent = copy.eyebrow;
+      if (el('hero-headline')) el('hero-headline').textContent = copy.headline;
+      if (el('hero-support')) el('hero-support').textContent = copy.support;
+    }
+
     function renderDashboard() {
       const persona = getPersonaSnapshot();
       const setText = (id, value) => {
         const element = document.getElementById(id);
-        if (element) {
-          element.textContent = value;
-        }
+        if (element) element.textContent = value;
       };
 
-      document.getElementById('profile-pill-name').textContent = persona.name;
-      document.getElementById('profile-pill-avatar').textContent = persona.initials;
+      const milestone = getMilestoneStatus();
+      const mood = getMoodState();
+      const challenges = [
+        { icon: '\uD83C\uDF72', title: 'Cook Together', progress: 60 },
+        { icon: '\uD83D\uDCD6', title: 'Story Circle', progress: 30 },
+        { icon: '\uD83D\uDCF5', title: 'No-Phone Dinner', progress: 0 }
+      ];
+      const nextActivities = persona.scheduleRows.slice(0, 3);
 
-      document.getElementById('kpi-row').innerHTML = persona.kpis.map(kpi => `
-        <div class="rounded-[1.7rem] bg-[#FDFBF7] px-5 py-4 shadow-linen">
-          <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8D857D]">${kpi[0]}</p>
-          <div class="mt-3 flex items-end justify-between gap-3">
-            <p class="text-2xl font-semibold text-[#1F3A3D]">${kpi[1]}</p>
-            <p class="text-xs font-semibold" style="color:${kpi[3]}">↗ ${kpi[2]}</p>
-          </div>
-        </div>
-      `).join('');
+      const totalVotes = state.adventureVotes.louvre + state.adventureVotes.safari;
 
-      setText('session-title', persona.session.title);
-      setText('session-time', persona.session.time);
-      setText('session-status', persona.session.status);
-      setText('session-duration', persona.session.duration);
-      setText('session-readiness', persona.session.readiness);
-      setText('timing-note', persona.session.timingNote);
-      setText('prompt-pack', persona.session.promptPack);
+      const setInner = (id, html) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+      };
 
-      const sessionTag = document.getElementById('session-tag');
-      if (sessionTag) {
-        sessionTag.textContent = persona.session.tag[0];
-        sessionTag.className = 'rounded-full px-3 py-1 text-xs font-semibold';
-        sessionTag.style.background = persona.session.tag[1];
-        sessionTag.style.color = persona.session.tag[2];
-        if (appState.liveSessions[appState.activePersona]) {
-          sessionTag.classList.add('animate-pulse');
+      setInner('hero-action-tiles', [
+        '<button class="rounded-full bg-white/20 backdrop-blur-sm border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/30 transition" onclick="toggleEventModal(true)">\uD83D\uDCC5</button>',
+        '<button class="rounded-full bg-white/20 backdrop-blur-sm border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/30 transition" onclick="addHeritageSuggestionToSchedule()">\uD83C\uDF72</button>',
+        '<button class="rounded-full bg-white/20 backdrop-blur-sm border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/30 transition" onclick="document.querySelector(\'[data-start-activity]\')?.click()">\uD83D\uDCF8</button>'
+      ].join(''));
+
+      setInner('status-ribbon', [
+        '<div class="status-bar">',
+        '<span class="gold-dot"></span>',
+        '<span>\uD83D\uDD25 ' + state.streak + '</span>',
+        '<span class="divider"></span>',
+        '<span>\uD83C\uDFC6 ' + milestone.completed + '/' + milestone.total + '</span>',
+        '<span class="divider"></span>',
+        '<span style="color:var(--gold)">' + (milestone.isReached ? '\u2728' : milestone.remaining + ' to ' + state.currentReward) + '</span>',
+        '<span style="margin-left:auto;display:flex;gap:4px">',
+        '<span class="progress-gold" style="width:120px;display:inline-flex;vertical-align:middle">',
+        '<span class="fill" style="width:' + milestone.percentage + '%"></span>',
+        '</span></span></div>'
+      ].join(''));
+
+      var plannerHtml = '<div class="editorial-card glass-strong" style="padding:1.5rem">';
+      plannerHtml += '<div class="flex items-center justify-between mb-5">';
+      plannerHtml += '<span class="text-sm font-medium text-[#9D958B]">\uD83D\uDCCB</span>';
+      plannerHtml += '<span class="badge">◉ Next</span></div>';
+      plannerHtml += '<div class="space-y-3">';
+
+      if (nextActivities.length) {
+        for (var i = 0; i < nextActivities.length; i++) {
+          var a = nextActivities[i];
+          plannerHtml += [
+            '<div class="flex items-center gap-4 px-4 py-3 rounded-2xl bg-white/50 hover:bg-white/80 transition cursor-pointer">',
+            '<span class="flex h-7 w-7 items-center justify-center rounded-full bg-[#1F3A3D] text-[11px] font-serif text-white italic">' + (i + 1) + '</span>',
+            '<div class="flex-1 min-w-0">',
+            '<div class="font-serif text-base text-[#1F3A3D] truncate">' + escapeHtml(a[0]) + '</div>',
+            '<div class="text-xs text-[#9D958B] mt-0.5">' + escapeHtml(a[1]) + '</div></div>',
+            '<span class="text-xs text-[#A8763E]">' + escapeHtml(a[2]) + '</span></div>'
+          ].join('');
         }
+      } else {
+        plannerHtml += [
+          '<div class="flex items-center gap-4 px-4 py-4 rounded-2xl bg-white/50">',
+          '<span class="text-xl">\uD83C\uDFAC</span>',
+          '<div class="flex-1"><div class="font-serif text-base text-[#1F3A3D]">Movie Night</div>',
+          '<div class="text-xs text-[#9D958B]">Let the AI plan it</div></div>',
+          '<button data-plan-activity class="rounded-full bg-[#A8763E] text-white px-4 py-2 text-sm font-medium">Plan</button></div>'
+        ].join('');
       }
 
-      document.getElementById('schedule-table').innerHTML = persona.scheduleRows.map((row, index) => `
-        <div class="grid grid-cols-[0.9fr_1.3fr_0.7fr_0.7fr] items-center gap-3 px-5 py-4">
-          <div>
-            <p class="text-sm font-semibold text-[#1F3A3D]">${row[0]}</p>
-            <p class="mt-1 text-xs text-[#8D857D]">Slot ${index + 1}</p>
-          </div>
-          <div class="text-sm text-[#5F5750]">${row[1]}</div>
-          <div>
-            <span class="rounded-full bg-[#FAF6F0] px-3 py-1 text-xs font-semibold text-[#1F3A3D]">${row[2]}</span>
-          </div>
-          <label class="inline-flex cursor-pointer items-center">
-            <input type="checkbox" class="hidden" ${row[3] ? 'checked' : ''}>
-            <span class="switch"></span>
-          </label>
-        </div>
-      `).join('');
+      plannerHtml += '</div></div>';
 
-      const presenceList = document.getElementById('presence-list');
-      if (presenceList) {
-        presenceList.innerHTML = persona.presence.map(member => `
-        <div class="flex items-center justify-between rounded-[1.3rem] bg-[#FAF6F0] px-4 py-3">
-          <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold text-white" style="background-image:${member[3]}">
-              ${member[0].split(' ').map(part => part[0]).join('').slice(0, 2)}
-            </div>
-            <div>
-              <p class="text-sm font-semibold text-[#1F3A3D]">${member[0]}</p>
-              <p class="mt-1 text-xs text-[#8D857D]">${member[1]}</p>
-            </div>
-          </div>
-          <span class="status-dot" style="background:${member[2]}"></span>
-        </div>
-      `).join('');
+      var challengeHtml = '<div class="editorial-card glass-strong" style="padding:1.5rem">';
+      challengeHtml += '<div class="flex items-center justify-between mb-5">';
+      challengeHtml += '<span class="text-sm font-medium text-[#9D958B]">\uD83C\uDF72</span>';
+      challengeHtml += '<span class="badge">◉ Live</span></div>';
+      challengeHtml += '<div class="space-y-4">';
+
+      for (var c in challenges) {
+        var ch = challenges[c];
+        challengeHtml += [
+          '<div class="flex items-center gap-4">',
+          '<span class="text-xl">' + ch.icon + '</span>',
+          '<div class="flex-1 min-w-0">',
+          '<div class="font-serif text-sm text-[#1F3A3D]">' + ch.title + '</div>',
+          '<div class="progress-gold mt-2"><span class="fill" style="width:' + ch.progress + '%"></span></div></div>',
+          '<button data-start-activity="' + ch.title + '" class="rounded-full border border-[#E7D7C6] bg-white/60 px-3 py-1.5 text-xs font-medium text-[#1F3A3D] hover:bg-[#A8763E] hover:text-white hover:border-[#A8763E] transition">\u25B6</button></div>'
+        ].join('');
       }
 
-      const readinessList = document.getElementById('readiness-list');
-      if (readinessList) {
-        readinessList.innerHTML = persona.readiness.map(item => `
-        <div>
-          <div class="mb-2 flex items-center justify-between">
-            <p class="text-sm font-semibold text-[#1F3A3D]">${item[0]}</p>
-            <p class="text-sm font-semibold text-[#8D857D]">${item[1]}%</p>
-          </div>
-          <div class="h-2.5 rounded-full bg-[#EFE5D8]">
-            <div class="h-2.5 rounded-full" style="width:${item[1]}%; background:${item[2]};"></div>
-          </div>
-        </div>
-      `).join('');
-      }
+      challengeHtml += '</div></div>';
 
-      const aiSuggestions = document.getElementById('ai-suggestions');
-      if (aiSuggestions) {
-        aiSuggestions.innerHTML = persona.suggestions.map(suggestion => `
-        <button class="rounded-full bg-[#FAF6F0] px-3 py-2 text-xs font-semibold text-[#1F3A3D]">${suggestion}</button>
-      `).join('');
-      }
+      var heritageVoteHtml = [
+        '<div class="grid-editorial-wide grid-editorial" style="margin-top:0">',
+        '<div class="editorial-card overflow-hidden rounded-2xl glass-strong">',
+        '<img src="Gemini_Generated_Image_5icb655icb655icb.png" alt="" class="w-full h-44 object-cover">',
+        '<div class="p-4">',
+        '<div class="flex items-center justify-between">',
+        '<span class="font-serif text-base text-[#1F3A3D]">Al Harees</span>',
+        '<span class="badge">Recipe</span></div>',
+        '<p class="text-xs text-[#9D958B] mt-1">Traditional Emirati wheat and meat</p>',
+        '<button id="heritage-suggestion-button" type="button" class="mt-3 w-full rounded-full bg-[#A8763E] text-white px-4 py-2 text-sm font-medium">Add to Week</button>',
+        '</div></div>',
+        '<div class="editorial-card glass-strong" style="padding:1.5rem">',
+        '<div class="flex items-center justify-between mb-4">',
+        '<span class="text-sm font-medium text-[#9D958B]">\uD83C\uDFD7\uFE0F</span>',
+        '<span class="badge">Vote</span></div>',
+        '<div class="space-y-4">',
+        '<div><div class="flex items-center justify-between text-sm mb-1">',
+        '<span>\uD83C\uDFDB\uFE0F</span>',
+        '<span class="font-serif text-[#1F3A3D]">' + state.adventureVotes.louvre + '</span></div>',
+        '<div class="progress-gold"><span class="fill" style="width:' + (totalVotes ? Math.round((state.adventureVotes.louvre / totalVotes) * 100) : 50) + '%"></span></div></div>',
+        '<div><div class="flex items-center justify-between text-sm mb-1">',
+        '<span>\uD83C\uDFDC\uFE0F</span>',
+        '<span class="font-serif text-[#1F3A3D]">' + state.adventureVotes.safari + '</span></div>',
+        '<div class="progress-gold"><span class="fill" style="width:' + (totalVotes ? Math.round((state.adventureVotes.safari / totalVotes) * 100) : 50) + '%"></span></div></div>',
+        '</div>',
+        '<div class="mt-4 flex gap-2">',
+        '<button type="button" data-vote-option="louvre" class="flex-1 rounded-full bg-white/60 border border-[#E7D7C6] px-3 py-2 text-xs font-medium text-[#1F3A3D] hover:bg-[#A8763E] hover:text-white transition">\uD83C\uDFDB\uFE0F</button>',
+        '<button type="button" data-vote-option="safari" class="flex-1 rounded-full bg-white/60 border border-[#E7D7C6] px-3 py-2 text-xs font-medium text-[#1F3A3D] hover:bg-[#1F3A3D] hover:text-white transition">\uD83C\uDFDC\uFE0F</button>',
+        '</div></div></div>'
+      ].join('');
 
-      const launchButton = document.getElementById('launch-button');
-      if (launchButton) {
-        launchButton.textContent = persona.session.launchLabel;
-        launchButton.className = appState.liveSessions[appState.activePersona]
-          ? 'inline-flex items-center justify-center rounded-full bg-[#C07A59] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(192,122,89,0.28)] animate-pulse'
-          : 'inline-flex items-center justify-center rounded-full bg-[#A8763E] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(168,118,62,0.22)]';
-      }
+      var questionHtml = [
+        '<div class="editorial-card grid-editorial-wide glass-strong" style="padding:1.2rem 1.5rem;margin-top:0.5rem">',
+        '<div class="flex items-center gap-4">',
+        '<span class="text-sm font-medium text-[#9D958B]">\uD83D\uDCAC</span>',
+        '<span class="font-serif text-sm text-[#1F3A3D] flex-1">What made your family smile this week?</span>',
+        '<div class="flex gap-2">',
+        '<input type="text" id="gratitude-input" placeholder="Share..." class="rounded-full border border-[#E7D7C6] bg-white/70 px-4 py-2 text-sm text-[#1F3A3D] outline-none focus:border-[#A8763E] transition w-44" />',
+        '<button id="gratitude-send-btn" class="rounded-full bg-[#A8763E] text-white px-4 py-2 text-sm font-medium">Send</button>',
+        '</div></div></div>'
+      ].join('');
+
+      setInner('dashboard-content', plannerHtml + challengeHtml + heritageVoteHtml + questionHtml);
+
+      setText('profile-pill-name', persona.name);
+      setText('profile-pill-avatar', persona.initials);
+
+      updateMoodTheme();
+      renderTabIndicators();
+    }
+    function renderTabIndicators() {
+      const ritualCount = getYouthEventsByTab('rituals').length;
+      const heritageCount = getYouthEventsByTab('heritage').length;
+      const navTabs = document.querySelectorAll('.nav-tab');
+      const youthTabs = document.querySelectorAll('[data-youth-tab]');
+
+      navTabs.forEach(tab => {
+        const view = tab.dataset.view;
+        let dotCount = 0;
+        if (view === 'rituals') dotCount = ritualCount;
+        else if (view === 'heritage') dotCount = heritageCount;
+
+        const existingDot = tab.querySelector('.tab-dot');
+        if (existingDot) existingDot.remove();
+
+        if (dotCount > 0) {
+          const dot = document.createElement('span');
+          dot.className = 'tab-dot';
+          tab.appendChild(dot);
+        }
+      });
+
+      youthTabs.forEach(tab => {
+        const view = tab.dataset.youthTab;
+        let dotCount = 0;
+        if (view === 'rituals') dotCount = ritualCount;
+        else if (view === 'heritage') dotCount = heritageCount;
+
+        const existingDot = tab.querySelector('.tab-dot');
+        if (existingDot) existingDot.remove();
+
+        if (dotCount > 0) {
+          const dot = document.createElement('span');
+          dot.className = 'tab-dot';
+          tab.appendChild(dot);
+        }
+      });
     }
 
     function renderParentEventBoard() {
@@ -1051,157 +1339,403 @@
       }).join('');
     }
 
-    function renderMoodWidget() {
-      const moodLog = getTodayMoodLog();
-      const selectedMood = moodLog ? moodLog.mood : null;
-      const moodLabelMap = {
+    function getMoodState() {
+      const moodLog = getTodayMoodLog() || getLatestMoodLog();
+      if (!moodLog) {
+        return { key: 'balanced', label: 'Balanced', display: '⚖️ Balanced' };
+      }
+
+      const labelMap = {
         energized: '⚡ High Energy',
         balanced: '⚖️ Balanced',
         drained: '🪫 Winding Down'
       };
 
-      moodWidget.innerHTML = `
-        <div class="space-y-4">
-          <div class="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#A8763E]">FamilyConnect AI Mood Check</div>
-          <div class="rounded-[1.8rem] border border-[#E8DDD1] bg-[linear-gradient(135deg,#F5F8FF_0%,#FFFFFF_100%)] px-4 py-4 shadow-[0_12px_30px_rgba(31,58,61,0.05)]">
-            <div class="max-w-[16rem] rounded-[1.35rem] rounded-bl-md bg-[#147EFB] px-4 py-3 text-sm font-medium text-white shadow-[0_10px_25px_rgba(20,126,251,0.22)]">
-              Hey Saif, how is the family's energy tonight?
+      return {
+        key: moodLog.mood,
+        label: moodOptions[moodLog.mood].label,
+        display: labelMap[moodLog.mood]
+      };
+    }
+
+    function getYouthTypeMeta(type) {
+      const map = {
+        'Smart Planning': { label: '✨ Smart Planner', tab: 'rituals' },
+        Challenge: { label: '🎲 Challenge', tab: 'rituals' },
+        Adventure: { label: '🏜️ Adventure Day', tab: 'adventure' },
+        'Heritage Hub': { label: '🕌 Heritage Vault', tab: 'heritage' }
+      };
+      return map[type] || { label: type, tab: 'dashboard' };
+    }
+
+    function getYouthEventsByTab(tabName) {
+      const filters = {
+        rituals: event => ['Challenge', 'Smart Planning'].includes(event.type),
+        adventure: event => event.type === 'Adventure',
+        heritage: event => event.type === 'Heritage Hub'
+      };
+      return state.events.filter(event => event.status !== 'Attended' && filters[tabName] && filters[tabName](event));
+    }
+
+    function renderYouthNavigation() {
+      document.querySelectorAll('[data-youth-tab]').forEach(button => {
+        const isActive = button.dataset.youthTab === appState.activeYouthTab;
+        button.style.background = isActive ? '#1F3A3D' : 'transparent';
+        button.style.color = isActive ? 'white' : '#9D958B';
+      });
+
+      document.querySelectorAll('[data-youth-range]').forEach(button => {
+        const isActive = button.dataset.youthRange === appState.activeYouthRange;
+        button.style.background = isActive ? '#1F3A3D' : 'transparent';
+        button.style.color = isActive ? 'white' : '#9D958B';
+      });
+
+      Object.entries(youthTabViews).forEach(([tabName, view]) => {
+        view.classList.toggle('hidden', tabName !== appState.activeYouthTab);
+      });
+    }
+
+    function createYouthEmptyState(icon, title) {
+      return `
+        <div class="flex min-h-[220px] flex-col items-center justify-center rounded-[2rem] border border-dashed border-[#E6DFD6] bg-[#FDFBF7] px-6 py-10 text-center shadow-linen">
+          <div class="text-4xl">${icon}</div>
+          <div class="mt-4 text-lg font-semibold text-[#1F3A3D]">${title}</div>
+        </div>
+      `;
+    }
+
+        function renderYouthDashboardView() {
+      const range = appState.activeYouthRange;
+      const primaryEvent = getPrimaryEvent();
+      const milestone = getMilestoneStatus();
+      const mood = getMoodState();
+      const persona = personas[appState.activePersona];
+      const nextPriorityMeta = primaryEvent ? getYouthTypeMeta(primaryEvent.type) : null;
+      const challenges = [
+        { icon: '\uD83C\uDF72', title: 'Cook Together', progress: 60 },
+        { icon: '\uD83D\uDCD6', title: 'Story Circle', progress: 30 },
+        { icon: '\uD83D\uDCF5', title: 'No-Phone Dinner', progress: 0 }
+      ];
+      const nextActivities = persona.scheduleRows.slice(0, 4);
+      const totalVotes = state.adventureVotes.louvre + state.adventureVotes.safari;
+      const memories = state.completedMemories;
+      const recentMemories = memories.slice(-3).reverse();
+
+      function getActivityIcon(name) {
+        const n = name.toLowerCase();
+        if (n.includes('story') || n.includes('hekayat') || n.includes('oral')) return '\uD83D\uDCD6';
+        if (n.includes('majlis') || n.includes('reflect') || n.includes('open home')) return '\uD83C\uDFE0';
+        if (n.includes('record') || n.includes('archive') || n.includes('photo') || n.includes('curat')) return '\uD83C\uDFF7\uFE0F';
+        if (n.includes('desert') || n.includes('karak') || n.includes('out')) return '\uD83C\uDFDC\uFE0F';
+        if (n.includes('sunset') || n.includes('walk')) return '\uD83C\uDF05';
+        if (n.includes('board') || n.includes('game')) return '\uD83C\uDFB2';
+        if (n.includes('heritage') || n.includes('traditional') || n.includes('al harees')) return '\uD83C\uDF7D\uFE0F';
+        if (n.includes('henna')) return '\u270B';
+        if (n.includes('poetry')) return '\uD83D\uDCDC';
+        if (n.includes('pearl') || n.includes('route')) return '\uD83D\uDC0C';
+        if (n.includes('challenge')) return '\uD83C\uDFC6';
+        return '\uD83D\uDCCB';
+      }
+
+      function getActivityStatusTag(status) {
+        const s = (status || '').toLowerCase();
+        if (s === 'confirmed') return '<span style="border-radius:999px;background:rgba(78,122,90,0.12);color:#4E7A5A;padding:0.15rem 0.7rem;font-size:0.7rem;font-weight:500;white-space:nowrap">\u2713 Confirmed</span>';
+        if (s === 'pending') return '<span style="border-radius:999px;background:rgba(192,122,89,0.12);color:#C07A59;padding:0.15rem 0.7rem;font-size:0.7rem;font-weight:500;white-space:nowrap">\u23F3 Pending</span>';
+        return '<span style="border-radius:999px;background:rgba(168,118,62,0.1);color:#A8763E;padding:0.15rem 0.7rem;font-size:0.7rem;font-weight:500;white-space:nowrap">\u25CB ' + escapeHtml(status) + '</span>';
+      }
+
+      var heroHtml = [
+        '<div style="display:grid;grid-template-columns:1.3fr 0.9fr;gap:1rem;margin-bottom:0.8rem">',
+
+        '<div class="editorial-card" style="padding:1.25rem 1.5rem;position:relative;overflow:hidden;box-shadow:0 12px 40px rgba(31,58,61,0.10)">',
+        '<div style="position:absolute;inset:0;opacity:0.06;background-image:url(&quot;data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E&quot;);background-size:200px 200px;pointer-events:none"></div>',
+        '<div style="position:relative;z-index:1">',
+        '<div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1rem">',
+        '<div><span style="font-size:2rem;font-weight:700;font-family:\'Inter\',sans-serif;color:#1F3A3D">' + state.streak + '</span><span style="margin-left:0.3rem;font-size:0.85rem;color:#9D958B;font-weight:400">day streak</span></div>',
+        '<div style="width:1px;height:2rem;background:rgba(168,118,62,0.15)"></div>',
+        '<div><span style="font-size:2rem;font-weight:700;font-family:\'Inter\',sans-serif;color:#1F3A3D">' + milestone.completed + '/' + milestone.total + '</span><span style="margin-left:0.3rem;font-size:0.85rem;color:#9D958B;font-weight:400">milestones</span></div>',
+        '</div>',
+        '<div class="progress-gold" style="width:100%;height:6px;border-radius:3px"><span class="fill" style="width:' + milestone.percentage + '%;height:6px;border-radius:3px"></span></div>',
+        '<div style="display:flex;justify-content:space-between;margin-top:0.3rem;font-size:0.7rem;color:#9D958B"><span>\uD83D\uDD25 ' + state.streak + ' day streak</span><span>' + (milestone.isReached ? '\u2728 Complete!' : milestone.remaining + ' to go') + '</span></div>',
+        '</div></div>',
+
+        '<div class="editorial-card" style="padding:1.25rem 1.5rem;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;box-shadow:0 12px 40px rgba(31,58,61,0.10)">',
+        '<div style="position:absolute;inset:0;opacity:0.06;background:linear-gradient(135deg,rgba(168,118,62,0.15),rgba(200,154,94,0.08)),url(&quot;data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n2\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n2)\'/%3E%3C/svg%3E&quot;);background-size:200px 200px;pointer-events:none"></div>',
+        '<div style="position:relative;z-index:1;flex:1;display:flex;flex-direction:column">',
+        '<div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">',
+        '<span style="font-size:2rem">\uD83C\uDFAC</span>',
+        '<div><div style="font-family:\'Playfair Display\',serif;font-size:1rem;color:#1F3A3D">' + escapeHtml(state.currentReward) + '</div>',
+        '<div style="font-size:0.7rem;color:#9D958B">Reward Preview</div></div>',
+        '</div>',
+        '<div style="margin-top:auto">',
+        '<button type="button" data-start-activity="reward-motivation" style="width:100%;border-radius:999px;background:linear-gradient(135deg,#E7C46B,#A8763E);border:none;padding:0.6rem 1rem;color:white;font-size:0.85rem;font-weight:500;cursor:pointer;box-shadow:0 8px 24px rgba(168,118,62,0.25)">' + (milestone.isReached ? '\u2728 Reward Ready!' : 'Keep going to unlock') + '</button>',
+        '</div>',
+        '</div></div></div>'
+      ].join('');
+
+      var agendaHtml = '<div class="editorial-card glass-strong" style="padding:1rem 1.25rem;box-shadow:0 8px 30px rgba(31,58,61,0.07)">';
+      agendaHtml += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem">';
+      agendaHtml += '<span style="font-size:0.8rem;font-weight:500;color:#9D958B">\uD83D\uDCCB ' + range.charAt(0).toUpperCase() + range.slice(1) + '</span>';
+      agendaHtml += '<span class="badge">\u25C9 Next</span></div>';
+
+      if (nextActivities.length) {
+        for (var i = 0; i < nextActivities.length; i++) {
+          var a = nextActivities[i];
+          var icon = getActivityIcon(a[1]);
+          var statusTag = getActivityStatusTag(a[2]);
+          agendaHtml += [
+            '<div style="display:flex;align-items:center;gap:0.7rem;padding:0.5rem 0.6rem;border-radius:1.2rem;transition:background 0.2s;cursor:pointer" onmouseover="this.style.background=\'rgba(255,255,255,0.6)\'" onmouseout="this.style.background=\'transparent\'">',
+            '<span style="font-size:1.1rem;width:1.8rem;text-align:center">' + icon + '</span>',
+            '<div style="flex:1;min-width:0">',
+            '<div style="font-family:\'Playfair Display\',serif;font-size:0.85rem;color:#1F3A3D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(a[0]) + ' &middot; ' + escapeHtml(a[1]) + '</div>',
+            '</div>',
+            statusTag,
+            '</div>'
+          ].join('');
+        }
+      } else {
+        agendaHtml += [
+          '<div style="display:flex;align-items:center;gap:0.7rem;padding:0.5rem 0.6rem;border-radius:1.2rem">',
+          '<span style="font-size:1.1rem">\uD83C\uDFAC</span>',
+          '<div style="flex:1"><div style="font-family:\'Playfair Display\',serif;font-size:0.85rem;color:#1F3A3D">Movie Night</div></div>',
+          '<button data-plan-activity style="border-radius:999px;background:#A8763E;color:white;border:none;padding:0.4rem 0.8rem;font-size:0.7rem;cursor:pointer">Plan</button></div>'
+        ].join('');
+      }
+      agendaHtml += '</div>';
+
+      var challengeHtml = '<div class="editorial-card glass-strong" style="padding:1rem 1.25rem;box-shadow:0 8px 30px rgba(31,58,61,0.07)">';
+      challengeHtml += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem">';
+      challengeHtml += '<span style="font-size:0.8rem;font-weight:500;color:#9D958B">\uD83C\uDF72</span>';
+      challengeHtml += '<span class="badge">\u25C9 Live</span></div>';
+
+      for (var c = 0; c < challenges.length; c++) {
+        var ch = challenges[c];
+        challengeHtml += [
+          '<div style="display:flex;align-items:center;gap:0.7rem;padding:0.35rem 0">',
+          '<span style="font-size:1.1rem;width:1.8rem;text-align:center">' + ch.icon + '</span>',
+          '<div style="flex:1;min-width:0">',
+          '<div style="font-family:\'Playfair Display\',serif;font-size:0.85rem;color:#1F3A3D">' + ch.title + '</div>',
+          '<div class="progress-gold" style="margin-top:0.2rem;height:4px"><span class="fill" style="width:' + ch.progress + '%;height:4px;border-radius:2px"></span></div></div>',
+          '<button data-start-activity="' + ch.title + '" style="border-radius:999px;border:1px solid #E7D7C6;background:rgba(255,255,255,0.6);padding:0.35rem 0.7rem;font-size:0.7rem;color:#1F3A3D;cursor:pointer">\u25B6</button></div>'
+        ].join('');
+      }
+      challengeHtml += '</div>';
+
+      var heritageVoteHtml = [
+        '<div style="display:grid;grid-template-columns:1.3fr 0.9fr;gap:1rem">',
+        '<div class="editorial-card" style="overflow:hidden;border-radius:1rem;box-shadow:0 8px 30px rgba(31,58,61,0.07)">',
+        '<img src="Gemini_Generated_Image_5icb655icb655icb.png" alt="" style="width:100%;height:8rem;object-fit:cover">',
+        '<div style="padding:0.75rem">',
+        '<div style="display:flex;align-items:center;justify-content:space-between">',
+        '<span style="font-family:\'Playfair Display\',serif;font-size:0.85rem;color:#1F3A3D">Al Harees</span>',
+        '<span class="badge">Recipe</span></div>',
+        '<button id="youth-heritage-suggest" type="button" style="margin-top:0.5rem;width:100%;border-radius:999px;background:#A8763E;color:white;border:none;padding:0.4rem 0.8rem;font-size:0.7rem;cursor:pointer">Add to Week</button>',
+        '</div></div>',
+        '<div class="editorial-card glass-strong" style="padding:1rem;box-shadow:0 8px 30px rgba(31,58,61,0.07)">',
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">',
+        '<span style="font-size:0.8rem;font-weight:500;color:#9D958B">\uD83C\uDFD7\uFE0F</span>',
+        '<span class="badge">Vote</span></div>',
+        '<div style="display:flex;flex-direction:column;gap:0.5rem">',
+        '<div><div style="display:flex;align-items:center;justify-content:space-between;font-size:0.7rem;margin-bottom:0.15rem">',
+        '<span>\uD83C\uDFDB\uFE0F</span>',
+        '<span style="font-family:\'Playfair Display\',serif;color:#1F3A3D">' + state.adventureVotes.louvre + '</span></div>',
+        '<div class="progress-gold" style="height:4px"><span class="fill" style="width:' + (totalVotes ? Math.round((state.adventureVotes.louvre / totalVotes) * 100) : 50) + '%;height:4px;border-radius:2px"></span></div></div>',
+        '<div><div style="display:flex;align-items:center;justify-content:space-between;font-size:0.7rem;margin-bottom:0.15rem">',
+        '<span>\uD83C\uDFDC\uFE0F</span>',
+        '<span style="font-family:\'Playfair Display\',serif;color:#1F3A3D">' + state.adventureVotes.safari + '</span></div>',
+        '<div class="progress-gold" style="height:4px"><span class="fill" style="width:' + (totalVotes ? Math.round((state.adventureVotes.safari / totalVotes) * 100) : 50) + '%;height:4px;border-radius:2px"></span></div></div>',
+        '</div>',
+        '<div style="display:flex;gap:0.5rem;margin-top:0.5rem">',
+        '<button type="button" data-vote-option="louvre" style="flex:1;border-radius:999px;background:rgba(255,255,255,0.6);border:1px solid #E7D7C6;padding:0.3rem 0.5rem;font-size:0.7rem;color:#1F3A3D;cursor:pointer">\uD83C\uDFDB\uFE0F</button>',
+        '<button type="button" data-vote-option="safari" style="flex:1;border-radius:999px;background:rgba(255,255,255,0.6);border:1px solid #E7D7C6;padding:0.3rem 0.5rem;font-size:0.7rem;color:#1F3A3D;cursor:pointer">\uD83C\uDFDC\uFE0F</button>',
+        '</div></div></div>'
+      ].join('');
+
+      var memoryCarousel = recentMemories.length
+        ? recentMemories.map(function(img) {
+            return '<img src="' + img + '" alt="" style="width:3.8rem;height:3.8rem;border-radius:0.8rem;object-fit:cover;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.08)">';
+          }).join('')
+        : '<div style="width:3.8rem;height:3.8rem;border-radius:0.8rem;background:rgba(168,118,62,0.08);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;color:#9D958B">\uD83D\uDCF7</div>';
+
+      var memoryHtml = [
+        '<div class="editorial-card glass-strong" style="padding:0.8rem 1.2rem;grid-column:1/-1;box-shadow:0 8px 30px rgba(31,58,61,0.07)">',
+        '<div style="display:flex;align-items:center;gap:0.75rem">',
+        '<span style="font-size:0.8rem;font-weight:500;color:#9D958B;white-space:nowrap">\uD83D\uDCF8 Today\u2019s Memory</span>',
+        '<div style="display:flex;gap:0.4rem;flex:1;overflow-x:auto;padding:0.2rem 0">' + memoryCarousel + '</div>',
+        '<input type="text" id="youth-gratitude-input" placeholder="Share..." style="border-radius:999px;border:1px solid #E7D7C6;background:rgba(255,255,255,0.7);padding:0.35rem 0.8rem;font-size:0.75rem;color:#1F3A3D;outline:none;width:7rem;flex-shrink:0" />',
+        '<button id="youth-gratitude-send" style="border-radius:999px;background:#A8763E;color:white;border:none;padding:0.35rem 0.8rem;font-size:0.75rem;cursor:pointer;flex-shrink:0">Send</button>',
+        '</div></div>'
+      ].join('');
+
+      youthDashboardContent.innerHTML = [
+        '<div class="grid-editorial">',
+        heroHtml,
+        agendaHtml,
+        challengeHtml,
+        heritageVoteHtml,
+        memoryHtml,
+        '</div>'
+      ].join('');
+    }
+
+    function renderRitualsChallengesView() {
+      const ritualEvents = getYouthEventsByTab('rituals');
+      const plannerCard = `
+        <div class="editorial-card glass-strong" style="padding:1.5rem;grid-column:span 2">
+          <div style="display:grid;gap:1rem;grid-template-columns:repeat(3,1fr)">
+            <div class="glass" style="border-radius:1.5rem;padding:1rem">
+              <div style="font-family:'Playfair Display',serif;color:#1F3A3D">Al Harees night</div>
+              <div style="font-size:0.75rem;color:#9D958B;margin-top:0.25rem">Cook together</div>
+            </div>
+            <div class="glass" style="border-radius:1.5rem;padding:1rem">
+              <div style="font-family:'Playfair Display',serif;color:#1F3A3D">Majlis circle</div>
+              <div style="font-size:0.75rem;color:#9D958B;margin-top:0.25rem">Storytelling</div>
+            </div>
+            <div class="glass" style="border-radius:1.5rem;padding:1rem">
+              <div style="font-family:'Playfair Display',serif;color:#1F3A3D">Reflection board</div>
+              <div style="font-size:0.75rem;color:#9D958B;margin-top:0.25rem">Gratitude</div>
             </div>
           </div>
-          <div class="flex flex-wrap gap-2">
-            ${Object.entries(moodOptions).map(([key, mood]) => `
-              <button
-                type="button"
-                data-mood="${key}"
-                class="rounded-full border px-3.5 py-2.5 text-sm font-semibold shadow-sm transition hover:-translate-y-0.5 hover:shadow-linen ${selectedMood === key ? 'border-[#A8763E] bg-[#FFF4E6] text-[#1F3A3D]' : 'border-[#E8DDD1] bg-[#FAF6F0] text-[#1F3A3D]'}"
-              >
-                ${moodLabelMap[key]}
-              </button>
-            `).join('')}
+        </div>
+      `;
+
+      const eventCards = ritualEvents.length
+        ? ritualEvents.map(event => {
+            const style = getEventTypeStyle(event.type);
+            return `
+              <div class="editorial-card glass-strong" style="padding:1.5rem">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem">
+                  <span style="border-radius:999px;padding:0.25rem 0.75rem;font-size:0.75rem;font-weight:500;background:${style.background};color:${style.color}">${escapeHtml(event.type)}</span>
+                  <span style="font-size:0.7rem;color:#9D958B">${escapeHtml(event.time)}</span>
+                </div>
+                <div style="font-family:'Playfair Display',serif;color:#1F3A3D;margin-top:1rem">${escapeHtml(event.name)}</div>
+                <button type="button" data-start-activity="${event.id}" style="margin-top:1.5rem;display:inline-flex;align-items:center;border-radius:999px;background:linear-gradient(135deg,#E7C46B,#A8763E);border:none;padding:0.6rem 1.2rem;color:white;font-size:0.85rem;cursor:pointer;box-shadow:0 12px 28px rgba(168,118,62,0.25)">\uD83D\uDCF8</button>
+              </div>
+            `;
+          }).join('')
+        : '';
+
+      ritualsChallengesGrid.innerHTML = `${plannerCard}${eventCards}`;
+    }
+
+    function renderAdventureDayView() {
+      const adventureEvents = getYouthEventsByTab('adventure');
+      const louvreVotes = state.adventureVotes.louvre;
+      const safariVotes = state.adventureVotes.safari;
+
+      adventureDayContent.innerHTML = `
+        <div class="editorial-card" style="padding:2rem;background:linear-gradient(135deg,#1F3A3D,#314F52);color:white;box-shadow:0 24px 70px rgba(31,58,61,0.2)">
+          <div style="display:grid;gap:1.5rem;grid-template-columns:1.05fr 0.95fr">
+            <div style="border-radius:1.8rem;background:rgba(255,255,255,0.08);padding:1.25rem;backdrop-filter:blur(8px)">
+              <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:white">Adventure Vote</div>
+              <div style="display:grid;gap:0.75rem;grid-template-columns:1fr 1fr;margin-top:1rem">
+                <button type="button" data-vote-option="louvre" style="overflow:hidden;border-radius:1.6rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.1);text-align:left;cursor:pointer;padding:0;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1)">
+                  <img src="Gemini_Generated_Image_6ou3tl6ou3tl6ou3.png" alt="" style="width:100%;height:9rem;object-fit:cover">
+                  <div style="padding:0.75rem">
+                    <div style="font-size:0.9rem;color:white">Louvre AD</div>
+                    <div style="font-size:0.7rem;color:rgba(255,255,255,0.65);margin-top:0.25rem">${louvreVotes} votes</div>
+                  </div>
+                </button>
+                <button type="button" data-vote-option="safari" style="overflow:hidden;border-radius:1.6rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.1);text-align:left;cursor:pointer;padding:0;transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1)">
+                  <img src="Gemini_Generated_Image_os8syaos8syaos8s.png" alt="" style="width:100%;height:9rem;object-fit:cover">
+                  <div style="padding:0.75rem">
+                    <div style="font-size:0.9rem;color:white">Desert Safari</div>
+                    <div style="font-size:0.7rem;color:rgba(255,255,255,0.65);margin-top:0.25rem">${safariVotes} vote${safariVotes === 1 ? '' : 's'}</div>
+                  </div>
+                </button>
+              </div>
+            </div>
+            <div style="overflow:hidden;border-radius:1.8rem;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.08);padding:1.25rem;backdrop-filter:blur(8px)">
+              <img src="Gemini_Generated_Image_bflkaybflkaybflk.png" alt="" style="width:100%;height:100%;min-height:16rem;border-radius:1.5rem;object-fit:cover">
+            </div>
+          </div>
+        </div>
+        ${adventureEvents.length
+          ? adventureEvents.map(event => `
+              <div class="editorial-card glass-strong" style="padding:1.5rem">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem">
+                  <span style="font-size:0.85rem;color:#A8763E">${escapeHtml(event.type)}</span>
+                  <span style="font-size:0.7rem;color:#9D958B">${escapeHtml(event.time)}</span>
+                </div>
+                <div style="font-family:'Playfair Display',serif;color:#1F3A3D;margin-top:1rem">${escapeHtml(event.name)}</div>
+                <button type="button" data-start-activity="${event.id}" style="margin-top:1.5rem;display:inline-flex;align-items:center;border-radius:999px;background:linear-gradient(135deg,#E7C46B,#A8763E);border:none;padding:0.6rem 1.2rem;color:white;font-size:0.85rem;cursor:pointer;box-shadow:0 12px 28px rgba(168,118,62,0.25)">\uD83D\uDCF8</button>
+              </div>
+            `).join('')
+          : ''}
+      `;
+    }
+
+    function renderHeritageVaultView() {
+      const heritageEvents = getYouthEventsByTab('heritage');
+      const capturedCards = state.completedMemories.map((image, index) => `
+        <div class="editorial-card" style="overflow:hidden;border-radius:1.5rem">
+          <img src="${image}" alt="" style="width:100%;height:16rem;object-fit:cover">
+          <div style="padding:1rem">
+            <div style="font-family:'Playfair Display',serif;color:#1F3A3D;font-size:0.9rem">Memory ${index + 1}</div>
+          </div>
+        </div>
+      `).join('');
+
+      const empty = (!heritageEvents.length && !capturedCards)
+        ? '<div style="grid-column:1/-1;text-align:center;padding:3rem 0;color:#9D958B;font-size:0.9rem">Add your first ritual</div>'
+        : '';
+
+      heritageVaultGrid.innerHTML = `
+        ${empty || heritageEvents.map(event => `
+          <div class="editorial-card glass-strong" style="overflow:hidden;border-radius:1.5rem">
+            <img src="Gemini_Generated_Image_5icb655icb655icb.png" alt="" style="width:100%;height:13rem;object-fit:cover">
+            <div style="padding:1.25rem">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:0.75rem">
+                <span style="font-size:0.75rem;color:#8A5A33">Heritage</span>
+                <span style="font-size:0.7rem;color:#9D958B">${escapeHtml(event.time)}</span>
+              </div>
+              <div style="font-family:'Playfair Display',serif;color:#1F3A3D">${escapeHtml(event.name)}</div>
+              <button type="button" data-start-activity="${event.id}" style="margin-top:1rem;display:inline-flex;align-items:center;border-radius:999px;background:linear-gradient(135deg,#E7C46B,#A8763E);border:none;padding:0.6rem 1.2rem;color:white;font-size:0.85rem;cursor:pointer;box-shadow:0 12px 28px rgba(168,118,62,0.25)">\uD83D\uDCF8</button>
+            </div>
+          </div>
+        `).join('')}
+        ${capturedCards}
+      `;
+    }
+
+    function renderMoodBubble() {
+      const mood = getMoodState();
+      const container = document.getElementById('youth-mood-bubble');
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="editorial-card glass-strong" style="padding:1.5rem">
+          <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#1F3A3D">${escapeHtml(mood.display)}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1rem">
+            ${Object.keys(moodOptions).map(key => {
+              const icon = key === 'energized' ? '\u26A1' : key === 'balanced' ? '\u2696\uFE0F' : '\uD83E\uDEAB';
+              const isActive = mood.key === key;
+              return '<button type="button" data-mood="' + key + '" style="border-radius:999px;border:1px solid ' + (isActive ? '#A8763E' : '#E8DDD1') + ';background:' + (isActive ? '#FFF4E6' : 'rgba(255,255,255,0.6)') + ';color:#1F3A3D;padding:0.5rem 0.9rem;font-size:0.8rem;cursor:pointer">' + icon + '</button>';
+            }).join('')}
           </div>
         </div>
       `;
     }
 
-    function renderYouthSummary() {
-      const milestone = getMilestoneStatus();
-      const latestMood = getTodayMoodLog() || getLatestMoodLog();
-
-      document.getElementById('streak-display').textContent = `🔥 ${state.streak} Day Family Streak`;
-      document.getElementById('streak-badge').textContent = latestMood ? `${moodOptions[latestMood.mood].label} mode` : 'Momentum high';
-      document.getElementById('milestone-progress-label').textContent = `${milestone.completed} / ${milestone.total}`;
-      document.getElementById('milestone-progress-bar').style.width = `${milestone.percentage}%`;
-      document.getElementById('current-milestone-display').textContent = milestone.isReached
-        ? 'Milestone Reached! 🎉'
-        : `${milestone.completed} / ${milestone.total} Activities Completed`;
-      document.getElementById('unlock-copy').textContent = milestone.isReached
-        ? `Milestone Reached! 🎉`
-        : 'Next Unlock: Vox Cinema Trip';
-    }
-
-    function renderYouthAgenda() {
-      const pendingEvents = state.events.filter(event => event.status !== 'Attended');
-      const attendedEvents = state.events.filter(event => event.status === 'Attended').sort((a, b) => b.id - a.id);
-      const tagLabels = {
-        'Heritage Hub': '🕌 Heritage Hub',
-        Challenge: '🎲 Challenge',
-        Adventure: '🏜️ Adventure'
-      };
-      const voteCardMarkup = `
-        <article class="rounded-[1.8rem] border border-[#E6DFD6] bg-[linear-gradient(135deg,#FFF8EE_0%,#FFFFFF_100%)] px-5 py-5 shadow-[0_18px_45px_rgba(31,58,61,0.06)]">
-          <div class="flex items-center justify-between gap-3">
-            <div class="text-sm font-semibold text-[#1F3A3D]">Monthly Adventure Vote</div>
-            <span class="rounded-full bg-[#FAF6F0] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#A8763E]">12h left</span>
-          </div>
-          <div class="mt-4 grid gap-3 sm:grid-cols-2">
-            <button type="button" data-vote-option="louvre" class="rounded-[1.35rem] border border-[#E8DDD1] bg-white px-4 py-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-linen">
-              <div class="text-sm font-semibold text-[#1F3A3D]">🏛️ Louvre AD</div>
-              <div class="mt-2 text-[11px] uppercase tracking-[0.18em] text-[#8D857D]">${state.adventureVotes.louvre} votes</div>
-            </button>
-            <button type="button" data-vote-option="safari" class="rounded-[1.35rem] border border-[#E8DDD1] bg-white px-4 py-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-linen">
-              <div class="text-sm font-semibold text-[#1F3A3D]">🏜️ Desert Safari</div>
-              <div class="mt-2 text-[11px] uppercase tracking-[0.18em] text-[#8D857D]">${state.adventureVotes.safari} vote${state.adventureVotes.safari === 1 ? '' : 's'}</div>
-            </button>
-          </div>
-        </article>
-      `;
-
-      document.getElementById('youth-pending-count').textContent = pendingEvents.length.toString();
-      document.getElementById('youth-attended-count').textContent = `${attendedEvents.length} activit${attendedEvents.length === 1 ? 'y' : 'ies'} completed tonight`;
-
-      youthAgendaList.innerHTML = `
-        ${voteCardMarkup}
-        ${pendingEvents.length
-          ? pendingEvents.map(event => {
-            const typeStyle = getEventTypeStyle(event.type);
-            return `
-              <article class="rounded-[1.8rem] border border-[#E6DFD6] bg-[linear-gradient(135deg,#FFFFFF_0%,#FBF7F1_100%)] px-5 py-5 shadow-[0_18px_45px_rgba(31,58,61,0.06)] transition hover:-translate-y-0.5 hover:shadow-linen">
-                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                  <div class="min-w-0 flex-1">
-                    <div class="flex flex-wrap items-center gap-3">
-                      <span class="rounded-full px-3 py-1 text-xs font-semibold" style="background:${typeStyle.background}; color:${typeStyle.color};">${escapeHtml(tagLabels[event.type] || event.type)}</span>
-                      <span class="rounded-full bg-[#F6F1EA] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#8D857D]">${escapeHtml(event.time)}</span>
-                    </div>
-                    <h4 class="mt-4 text-[1.05rem] font-semibold tracking-[-0.02em] text-[#1F3A3D]">${escapeHtml(event.name)}</h4>
-                  </div>
-                  <button type="button" data-start-activity="${event.id}" class="inline-flex shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#E7C46B] to-[#A8763E] px-5 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(168,118,62,0.28)] transition hover:-translate-y-0.5">
-                    📸 Unlock Memory
-                  </button>
-                </div>
-              </article>
-            `;
-          }).join('')
-          : '<div class="rounded-[1.5rem] border border-dashed border-[#E6DFD6] bg-[#FAF6F0] px-4 py-5 text-sm font-semibold text-[#8D857D]">All synced activities complete</div>'}
-      `;
-
-      youthHistoryList.innerHTML = attendedEvents.length
-        ? attendedEvents.map(event => {
-            const typeStyle = getEventTypeStyle(event.type);
-            return `
-              <article class="rounded-[1.4rem] border border-[#E7DED2] bg-[#FAF6F0] px-4 py-4">
-                <div class="flex items-center justify-between gap-3">
-                  <span class="rounded-full px-3 py-1 text-xs font-semibold" style="background:${typeStyle.background}; color:${typeStyle.color};">${escapeHtml(tagLabels[event.type] || event.type)}</span>
-                  <span class="rounded-full bg-[#EEF5F0] px-3 py-1 text-xs font-semibold text-[#4E7A5A]">Milestone Progress</span>
-                </div>
-                <h4 class="mt-4 text-base font-semibold text-[#1F3A3D] line-through decoration-[#A8763E] decoration-2">${escapeHtml(event.name)}</h4>
-                <div class="mt-2 text-sm text-[#6A625B]">${escapeHtml(event.time)} · Attended</div>
-                <div class="mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#A8763E]">${escapeHtml(event.attendanceMode || 'Memory Unlock')}</div>
-              </article>
-            `;
-          }).join('')
-        : `
-          <div class="rounded-[1.4rem] bg-[#FAF6F0] px-4 py-5 text-sm font-semibold text-[#8D857D]">
-            No completed activities yet
-          </div>
-        `;
-    }
-
-    function renderCapturedMomentsGallery() {
-      const gallery = document.getElementById('captured-moments-gallery');
-
-      if (!state.completedMemories.length) {
-        gallery.innerHTML = '';
-        return;
-      }
-
-      gallery.innerHTML = state.completedMemories.map((image, index) => `
-        <img src="${image}" alt="Captured family memory ${index + 1}" class="h-72 w-full rounded-[1.5rem] object-cover">
-      `).join('');
+    function renderYouthApp() {
+      renderYouthNavigation();
+      renderYouthDashboardView();
+      renderRitualsChallengesView();
+      renderAdventureDayView();
+      renderHeritageVaultView();
+      renderMoodBubble();
     }
 
     function renderAllSharedUI() {
       renderDashboard();
       renderParentEventBoard();
-      renderMoodWidget();
-      renderYouthSummary();
-      renderYouthAgenda();
-      renderCapturedMomentsGallery();
+      renderYouthApp();
     }
 
     function switchPersona(name) {
       appState.activePersona = name;
       syncPersonaActiveState();
-      renderDashboard();
+      renderAllSharedUI();
     }
 
     function setActiveNav(buttonElement) {
@@ -1265,6 +1799,16 @@
       setPortalToggleState();
     }
 
+    function switchYouthTab(tabName) {
+      appState.activeYouthTab = tabName;
+      renderYouthApp();
+    }
+
+    function switchYouthRange(rangeName) {
+      appState.activeYouthRange = rangeName;
+      renderYouthApp();
+    }
+
     function syncBodyScrollLock() {
       document.body.classList.toggle('overflow-hidden', appState.eventModalOpen || appState.cameraModalOpen);
     }
@@ -1284,7 +1828,7 @@
       const targetEvent = getEventById(activeActivityEventId);
 
       if (!targetEvent) {
-        cameraModalEventType.textContent = 'Activity Check-In';
+        cameraModalEventType.textContent = 'Memory Unlock';
         cameraModalEventName.textContent = 'Snap a group photo';
         cameraModalEventTime.textContent = 'Capture the whole household together to confirm the activity and unlock tonight\'s reward.';
         return;
@@ -1321,8 +1865,8 @@
       }
 
       appState.cameraModalOpen = nextState;
-      cameraModal.classList.toggle('hidden', !appState.cameraModalOpen);
-      cameraModal.classList.toggle('flex', appState.cameraModalOpen);
+      cameraOverlay.classList.toggle('open', appState.cameraModalOpen);
+      mainBlur.classList.toggle('blurred', appState.cameraModalOpen);
       syncBodyScrollLock();
 
       if (appState.cameraModalOpen) {
@@ -1376,6 +1920,7 @@
       }
 
       renderAllSharedUI();
+      updateMoodTheme();
     }
 
     function addEventIfMissing(nextEvent) {
@@ -1576,7 +2121,6 @@
 
     document.getElementById('open-event-modal').addEventListener('click', () => toggleEventModal(true));
     document.getElementById('auto-schedule-ai').addEventListener('click', autoScheduleWithAI);
-    document.getElementById('heritage-suggestion-button').addEventListener('click', addHeritageSuggestionToSchedule);
     document.getElementById('close-event-modal').addEventListener('click', () => toggleEventModal(false));
     document.getElementById('cancel-event-modal').addEventListener('click', () => toggleEventModal(false));
     eventModal.addEventListener('click', event => {
@@ -1596,16 +2140,13 @@
     });
     eventForm.addEventListener('submit', submitEventForm);
 
-    moodWidget.addEventListener('click', event => {
+    document.addEventListener('click', event => {
       const moodButton = event.target.closest('[data-mood]');
-      if (!moodButton) {
+      if (moodButton) {
+        logMood(moodButton.dataset.mood);
         return;
       }
 
-      logMood(moodButton.dataset.mood);
-    });
-
-    youthAgendaList.addEventListener('click', event => {
       const voteButton = event.target.closest('[data-vote-option]');
       if (voteButton) {
         registerAdventureVote(voteButton.dataset.voteOption);
@@ -1613,24 +2154,70 @@
       }
 
       const startButton = event.target.closest('[data-start-activity]');
-      if (!startButton) {
+      if (startButton) {
+        toggleCameraModal(true, startButton.dataset.startActivity);
         return;
       }
 
-      toggleCameraModal(true, startButton.dataset.startActivity);
+      const heritageBtn = event.target.closest('#heritage-suggestion-button, #youth-heritage-suggest');
+      if (heritageBtn) {
+        addHeritageSuggestionToSchedule();
+        return;
+      }
+
+      if (event.target.matches('#gratitude-send-btn')) {
+        const input = document.getElementById('gratitude-input');
+        if (input && input.value.trim()) {
+          state.moodLogs.push({ mood: 'grateful', note: input.value.trim(), timestamp: new Date().toISOString() });
+          input.value = '';
+          updateMoodTheme();
+        }
+        return;
+      }
+
+      if (event.target.matches('#youth-gratitude-send')) {
+        const input = document.getElementById('youth-gratitude-input');
+        if (input && input.value.trim()) {
+          state.moodLogs.push({ mood: 'grateful', note: input.value.trim(), timestamp: new Date().toISOString() });
+          input.value = '';
+        }
+        return;
+      }
+
+      const planBtn = event.target.closest('[data-plan-activity]');
+      if (planBtn) {
+        toggleEventModal(true);
+        return;
+      }
+    });
+
+    portalYouth.addEventListener('click', event => {
+      const tabButton = event.target.closest('[data-youth-tab]');
+      if (tabButton) {
+        switchYouthTab(tabButton.dataset.youthTab);
+        return;
+      }
+
+      const rangeButton = event.target.closest('[data-youth-range]');
+      if (rangeButton) {
+        switchYouthRange(rangeButton.dataset.youthRange);
+        return;
+      }
+
+      const openTabButton = event.target.closest('[data-open-youth-tab]');
+      if (openTabButton) {
+        switchYouthTab(openTabButton.dataset.openYouthTab);
+        return;
+      }
     });
 
     document.getElementById('close-camera-modal').addEventListener('click', () => toggleCameraModal(false));
-    cameraModal.addEventListener('click', event => {
-      if (event.target === cameraModal) {
+    cameraOverlay.addEventListener('click', event => {
+      if (event.target === cameraOverlay || event.target.closest('.backdrop')) {
         toggleCameraModal(false);
       }
     });
     cameraActionButton.addEventListener('click', handleCameraAction);
-    const launchButton = document.getElementById('launch-button');
-    if (launchButton) {
-      launchButton.addEventListener('click', toggleLiveSession);
-    }
     portalToggleParent.addEventListener('click', () => switchPortal('parent'));
     portalToggleYouth.addEventListener('click', () => switchPortal('youth'));
     window.addEventListener('beforeunload', stopCameraStream);
