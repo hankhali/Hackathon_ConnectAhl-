@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ConnectAhl+ luxury family platform dashboard for the UAE Year of the Family 2026">
+  <title>ConnectAhl+ | Year of the Family 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Fraunces', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          boxShadow: {
+            linen: '0 15px 50px rgba(43,37,32,0.04)',
+          },
+          colors: {
+            sand: '#FAF6F0',
+            ivory: '#FDFBF7',
+            majlis: '#1F3A3D',
+            gold: '#A8763E',
+            terracotta: '#C07A59',
+            muted: '#8D857D',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(168, 118, 62, 0.12), transparent 25%),
+        radial-gradient(circle at top right, rgba(31, 58, 61, 0.08), transparent 20%),
+        linear-gradient(180deg, #fffaf4 0%, #faf6f0 28%, #faf6f0 100%);
+      color: #2B2520;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .tab-active::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -14px;
+      height: 2px;
+      border-radius: 999px;
+      background: #A8763E;
+    }
+
+    .persona-active {
+      border-color: #A8763E !important;
+      box-shadow: 0 14px 30px rgba(168, 118, 62, 0.18);
+      transform: translateY(-2px);
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .masonry {
+      column-count: 3;
+      column-gap: 24px;
+    }
+
+    .masonry-item {
+      break-inside: avoid;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 1200px) {
+      .masonry {
+        column-count: 2;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .masonry {
+        column-count: 1;
+      }
+    }
+  </style>
+</head>
+<body class="bg-[#FAF6F0] text-[#2B2520]">
+  <div class="min-h-screen">
+    <header class="w-full bg-white/70 backdrop-blur-md sticky top-0 z-50 border-b border-[#EDE4D9] px-12 py-5 flex justify-between items-center">
+      <div class="text-[#1F3A3D] text-xl font-extrabold tracking-[-0.03em]">ConnectAhl+</div>
+
+      <nav class="hidden md:flex items-center space-x-8">
+        <button class="nav-tab relative text-[#1F3A3D] font-semibold pb-1 tab-active" data-view="dashboard">Dashboard</button>
+        <button class="nav-tab relative text-[#9D958B] font-medium pb-1" data-view="rituals">Rituals</button>
+        <button class="nav-tab relative text-[#9D958B] font-medium pb-1" data-view="heritage">Heritage Vault</button>
+        <button class="nav-tab relative text-[#9D958B] font-medium pb-1" data-view="majlis">Majlis Mode</button>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <button class="w-11 h-11 rounded-full bg-white/80 text-lg shadow-linen flex items-center justify-center text-[#1F3A3D]" aria-label="Notifications">🔔</button>
+        <button id="profile-pill" class="flex items-center gap-3 rounded-full bg-[#FDFBF7] px-4 py-2.5 shadow-linen text-[#1F3A3D]">
+          <span class="w-8 h-8 rounded-full bg-[#EDE4D9] flex items-center justify-center text-sm font-bold">M</span>
+          <span class="text-sm font-semibold" id="profile-pill-name">Mariam</span>
+          <span class="text-xs text-[#8D857D]">▾</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8">
+      <section class="mb-8 rounded-[2rem] bg-white/55 px-8 py-7 shadow-linen">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.22em] text-[#A8763E]">Year of the Family 2026</p>
+            <h1 class="mt-3 font-display text-4xl text-[#1F3A3D]">Viewing Household Status As:</h1>
+            <p class="mt-2 max-w-2xl text-[15px] leading-7 text-[#756C63]">
+              Move between family perspectives to understand rituals, emotional cohesion, and heritage preservation across the household.
+            </p>
+          </div>
+
+          <div id="persona-switcher" class="flex flex-wrap items-start gap-5"></div>
+        </div>
+      </section>
+
+      <section id="dashboard-view" class="view active space-y-8">
+        <div class="grid gap-8 xl:grid-cols-[1.05fr_1.3fr]">
+          <div class="rounded-[2rem] bg-[#FDFBF7] p-4 shadow-linen">
+            <div class="relative overflow-hidden rounded-[1.7rem]">
+              <video src="hero-loop.mp4" autoplay loop muted playsinline class="w-full h-[400px] object-cover rounded-[1.7rem]"></video>
+              <div class="absolute inset-0 bg-gradient-to-t from-[#102628]/90 via-[#102628]/15 to-transparent"></div>
+              <div class="absolute left-8 right-8 bottom-8 text-white">
+                <p class="text-xs uppercase tracking-[0.28em] text-white/70">Tonight · 7:30 PM · Family Ritual</p>
+                <h2 id="hero-overlay-title" class="mt-3 font-display text-4xl">Device-Free Dinner</h2>
+                <p id="hero-overlay-subtitle" class="mt-3 max-w-md text-sm leading-6 text-white/78">
+                  Shared presence, slower conversation, and a table designed for listening.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-[2rem] bg-[#FDFBF7] p-8 shadow-linen">
+            <div class="flex flex-wrap items-center gap-3 text-sm">
+              <span class="rounded-full bg-[#F4E8D7] px-4 py-2 font-semibold text-[#A8763E]">National Showcase Ready</span>
+              <span class="rounded-full bg-[#EDF5EE] px-4 py-2 font-semibold text-[#4E7A5A]">AI schedule aligned</span>
+              <span class="rounded-full bg-[#FFF0E7] px-4 py-2 font-semibold text-[#C07A59]">Majlis etiquette cues live</span>
+            </div>
+
+            <h2 id="hero-title" class="mt-6 font-display text-6xl leading-[1.02] tracking-[-0.04em] text-[#1F3A3D]">
+              Device-Free Dinner
+            </h2>
+            <p id="hero-description" class="mt-5 max-w-2xl text-[17px] leading-8 text-[#655C55]">
+              The platform proposes a calm evening ritual with adaptive timing, prayer-aware sequencing, and gentle prompts that help every family member arrive emotionally present.
+            </p>
+
+            <div class="mt-8 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+              <div class="rounded-[1.6rem] bg-[#FAF6F0] p-6">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-xs uppercase tracking-[0.24em] text-[#A8763E]">AI Scheduling Preview</p>
+                    <p class="mt-2 text-lg font-semibold text-[#1F3A3D]">Household harmony forecast</p>
+                  </div>
+                  <div class="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1F3A3D]" id="forecast-score">94% fit</div>
+                </div>
+
+                <div class="mt-5 space-y-4" id="schedule-preview">
+                  <div class="flex items-center justify-between rounded-2xl bg-white px-4 py-4">
+                    <div>
+                      <p class="font-semibold text-[#1F3A3D]">Arrival window</p>
+                      <p class="mt-1 text-sm text-[#7F766E]">Everyone reaches home before dinner preparation begins</p>
+                    </div>
+                    <span class="rounded-full bg-[#EDF5EE] px-3 py-1 text-xs font-semibold text-[#4E7A5A]">Stable</span>
+                  </div>
+                  <div class="flex items-center justify-between rounded-2xl bg-white px-4 py-4">
+                    <div>
+                      <p class="font-semibold text-[#1F3A3D]">Screen wind-down</p>
+                      <p class="mt-1 text-sm text-[#7F766E]">Soft reminders sent 20 minutes before gathering</p>
+                    </div>
+                    <span class="rounded-full bg-[#FFF0E7] px-3 py-1 text-xs font-semibold text-[#C07A59]">Monitor</span>
+                  </div>
+                  <div class="flex items-center justify-between rounded-2xl bg-white px-4 py-4">
+                    <div>
+                      <p class="font-semibold text-[#1F3A3D]">Conversation prompts</p>
+                      <p class="mt-1 text-sm text-[#7F766E]">Three reflective questions surfaced for the table</p>
+                    </div>
+                    <span class="rounded-full bg-[#F4E8D7] px-3 py-1 text-xs font-semibold text-[#A8763E]">Curated</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rounded-[1.6rem] bg-[#1F3A3D] p-6 text-white">
+                <p class="text-xs uppercase tracking-[0.24em] text-[#E1C8AA]">Tonight’s host lens</p>
+                <p id="host-lens" class="mt-3 text-xl font-semibold leading-8">Mariam is leading the household rhythm and meal coordination.</p>
+                <div class="mt-6 space-y-3 text-sm text-white/72" id="host-notes">
+                  <p>Two family members respond better to voice nudges than push alerts.</p>
+                  <p>Best dinner opening question has a high intergenerational engagement score.</p>
+                </div>
+                <button class="mt-8 inline-flex items-center justify-center rounded-full bg-[#A8763E] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(168,118,62,0.26)] transition hover:translate-y-[-1px]">
+                  Start Family Time
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid gap-8 xl:grid-cols-[1.05fr_0.95fr]">
+          <div class="rounded-[2rem] bg-[#FDFBF7] p-8 shadow-linen">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="text-xs uppercase tracking-[0.24em] text-[#A8763E]">AI Meal Scheduler</p>
+                <h3 class="mt-3 font-display text-4xl text-[#1F3A3D]">A week designed around togetherness</h3>
+              </div>
+              <div class="rounded-full bg-[#FAF6F0] px-4 py-2 text-sm font-semibold text-[#1F3A3D]">Adaptive</div>
+            </div>
+
+            <div id="meal-schedule" class="mt-8 space-y-4"></div>
+          </div>
+
+          <div class="rounded-[2rem] bg-[#FDFBF7] p-8 shadow-linen">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="text-xs uppercase tracking-[0.24em] text-[#A8763E]">Cohesion Analytics & Badges</p>
+                <h3 class="mt-3 font-display text-4xl text-[#1F3A3D]">Signals of family resilience</h3>
+              </div>
+              <div class="rounded-full bg-[#F4E8D7] px-4 py-2 text-sm font-semibold text-[#A8763E]" id="cohesion-score">87 / 100</div>
+            </div>
+
+            <div id="analytics-bars" class="mt-8 space-y-5"></div>
+
+            <div class="mt-8 grid gap-4 sm:grid-cols-3" id="badge-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="rituals-view" class="view space-y-8">
+        <div class="rounded-[2rem] bg-[#FDFBF7] p-8 shadow-linen">
+          <p class="text-xs uppercase tracking-[0.24em] text-[#A8763E]">Ritual Design Studio</p>
+          <h2 class="mt-3 font-display text-5xl text-[#1F3A3D]">Signature rituals for every week of the year</h2>
+          <p class="mt-4 max-w-3xl text-[17px] leading-8 text-[#6D655E]">
+            ConnectAhl+ choreographs rituals across food, storytelling, volunteering, and prayer-adjacent reflection to create a household rhythm that feels modern, rooted, and measurable.
+          </p>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-3">
+          <div class="rounded-[2rem] bg-[#FDFBF7] p-7 shadow-linen">
+            <p class="text-sm font-semibold text-[#A8763E]">Sunday</p>
+            <h3 class="mt-4 text-2xl font-semibold text-[#1F3A3D]">Majlis Tea Reset</h3>
+            <p class="mt-3 text-[15px] leading-7 text-[#6D655E]">A gentle family check-in with tea service, elder updates, and one gratitude round.</p>
+          </div>
+          <div class="rounded-[2rem] bg-[#FDFBF7] p-7 shadow-linen">
+            <p class="text-sm font-semibold text-[#A8763E]">Wednesday</p>
+            <h3 class="mt-4 text-2xl font-semibold text-[#1F3A3D]">Heritage Kitchen Night</h3>
+            <p class="mt-3 text-[15px] leading-7 text-[#6D655E]">Recipes become a storytelling engine with ingredient prompts tied to family memory capture.</p>
+          </div>
+          <div class="rounded-[2rem] bg-[#FDFBF7] p-7 shadow-linen">
+            <p class="text-sm font-semibold text-[#A8763E]">Friday</p>
+            <h3 class="mt-4 text-2xl font-semibold text-[#1F3A3D]">Open Home Gathering</h3>
+            <p class="mt-3 text-[15px] leading-7 text-[#6D655E]">Invite extended family, track attendance warmth, and surface intergenerational conversation prompts.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="heritage-view" class="view space-y-8">
+        <div class="rounded-[2rem] bg-[#FDFBF7] p-8 shadow-linen">
+          <p class="text-xs uppercase tracking-[0.24em] text-[#A8763E]">Heritage Vault</p>
+          <h2 class="mt-3 font-display text-5xl text-[#1F3A3D]">A digital majlis scrapbook for stories, artifacts, and belonging</h2>
+          <p class="mt-4 max-w-4xl text-[17px] leading-8 text-[#6D655E]">
+            This view turns the platform into an immersive archive: images, family quotes, event cards, and memory fragments arranged like a living cultural salon.
+          </p>
+        </div>
+
+        <div class="masonry" id="heritage-masonry">
+          <div class="masonry-item rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
+            <img src="Gemini_Generated_Image_5icb655icb655icb.png" alt="Heritage moodboard" class="h-72 w-full rounded-[1.5rem] object-cover">
+            <h3 class="mt-5 text-2xl font-semibold text-[#1F3A3D]">Pearl routes remembered</h3>
+            <p class="mt-3 text-[15px] leading-7 text-[#6D655E]">Archived objects, oral histories, and family migration notes preserved as a tactile memory wall.</p>
+          </div>
+
+          <div class="masonry-item rounded-[2rem] bg-[#1F3A3D] p-7 text-white shadow-linen">
+            <p class="text-xs uppercase tracking-[0.24em] text-[#E1C8AA]">Audio note</p>
+            <p class="mt-4 font-display text-3xl leading-[1.15]">“The majlis was where decisions softened and stories became guidance.”</p>
+            <p class="mt-5 text-sm text-white/70">Recorded from Umm Khalid’s memory archive, indexed for younger generations.</p>
+          </div>
+
+          <div class="masonry-item rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
+            <img src="Gemini_Generated_Image_6ou3tl6ou3tl6ou3.png" alt="Family archive visual" class="h-96 w-full rounded-[1.5rem] object-cover">
+            <div class="mt-5 flex items-center justify-between">
+              <div>
+                <h3 class="text-2xl font-semibold text-[#1F3A3D]">Generational styleboard</h3>
+                <p class="mt-2 text-sm text-[#756C63]">Traditional textiles, hospitality rituals, and heirloom objects.</p>
+              </div>
+              <span class="rounded-full bg-[#F4E8D7] px-3 py-1 text-xs font-semibold text-[#A8763E]">Curated</span>
+            </div>
+          </div>
+
+          <div class="masonry-item rounded-[2rem] bg-[#FDFBF7] p-7 shadow-linen">
+            <p class="text-xs uppercase tracking-[0.24em] text-[#A8763E]">Memory thread</p>
+            <h3 class="mt-4 text-3xl font-semibold text-[#1F3A3D]">Wedding invitations, scanned and connected</h3>
+            <p class="mt-3 text-[15px] leading-7 text-[#6D655E]">The platform links dates, locations, and voices to reconstruct family timelines with emotional context.</p>
+          </div>
+
+          <div class="masonry-item rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
+            <img src="Gemini_Generated_Image_bflkaybflkaybflk.png" alt="Cultural moments collage" class="h-80 w-full rounded-[1.5rem] object-cover">
+            <h3 class="mt-5 text-2xl font-semibold text-[#1F3A3D]">Hospitality rituals atlas</h3>
+            <p class="mt-3 text-[15px] leading-7 text-[#6D655E]">A visual map of serving traditions, guest protocols, and the emotional meaning behind each gesture.</p>
+          </div>
+
+          <div class="masonry-item rounded-[2rem] bg-[#FFF4EC] p-7 shadow-linen">
+            <p class="text-xs uppercase tracking-[0.24em] text-[#C07A59]">Family prompt</p>
+            <p class="mt-4 text-2xl font-semibold text-[#7A4C35]">Ask the youngest member to photograph one object that feels like home, then attach a voice note from the eldest.</p>
+          </div>
+
+          <div class="masonry-item rounded-[2rem] bg-[#FDFBF7] p-5 shadow-linen">
+            <img src="Gemini_Generated_Image_os8syaos8syaos8s.png" alt="Scrapbook artifact" class="h-[28rem] w-full rounded-[1.5rem] object-cover">
+            <h3 class="mt-5 text-2xl font-semibold text-[#1F3A3D]">Future archive</h3>
+            <p class="mt-3 text-[15px] leading-7 text-[#6D655E]">This is where new rituals become tomorrow’s heritage, automatically cataloged by date, host, and sentiment.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="majlis-view" class="view space-y-8">
+        <div class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+          <div class="rounded-[2rem] bg-[#1F3A3D] p-8 text-white shadow-linen">
+            <p class="text-xs uppercase tracking-[0.24em] text-[#E1C8AA]">Majlis Mode</p>
+            <h2 class="mt-3 font-display text-5xl">Hosting intelligence for graceful gatherings</h2>
+            <p class="mt-4 max-w-2xl text-[17px] leading-8 text-white/76">
+              A mode designed for live hosting, seating flow, hospitality etiquette, and subtle AI support without breaking the calm of the room.
+            </p>
+          </div>
+          <div class="rounded-[2rem] bg-[#FDFBF7] p-8 shadow-linen">
+            <p class="text-sm font-semibold text-[#A8763E]">Live readiness</p>
+            <div class="mt-5 space-y-5">
+              <div>
+                <div class="mb-2 flex items-center justify-between text-sm font-semibold text-[#1F3A3D]">
+                  <span>Guest arrival pacing</span>
+                  <span>89%</span>
+                </div>
+                <div class="h-2 rounded-full bg-[#EFE5D8]"><div class="h-2 w-[89%] rounded-full bg-[#A8763E]"></div></div>
+              </div>
+              <div>
+                <div class="mb-2 flex items-center justify-between text-sm font-semibold text-[#1F3A3D]">
+                  <span>Conversation balance</span>
+                  <span>74%</span>
+                </div>
+                <div class="h-2 rounded-full bg-[#EFE5D8]"><div class="h-2 w-[74%] rounded-full bg-[#C07A59]"></div></div>
+              </div>
+              <div>
+                <div class="mb-2 flex items-center justify-between text-sm font-semibold text-[#1F3A3D]">
+                  <span>Hospitality flow</span>
+                  <span>93%</span>
+                </div>
+                <div class="h-2 rounded-full bg-[#EFE5D8]"><div class="h-2 w-[93%] rounded-full bg-[#1F3A3D]"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const personas = {
+      mariam: {
+        name: 'Mariam',
+        initials: 'M',
+        role: 'Household Curator',
+        gradient: 'linear-gradient(135deg, #e8d0b2 0%, #d1a06f 100%)',
+        title: 'Device-Free Dinner',
+        overlaySubtitle: 'Shared presence, slower conversation, and a table designed for listening.',
+        description: 'The platform proposes a calm evening ritual with adaptive timing, prayer-aware sequencing, and gentle prompts that help every family member arrive emotionally present.',
+        fit: '94% fit',
+        hostLens: 'Mariam is leading the household rhythm and meal coordination.',
+        hostNotes: [
+          'Two family members respond better to voice nudges than push alerts.',
+          'Best dinner opening question has a high intergenerational engagement score.'
+        ],
+        schedule: [
+          ['Arrival window', 'Everyone reaches home before dinner preparation begins', 'Stable', '#EDF5EE', '#4E7A5A'],
+          ['Screen wind-down', 'Soft reminders sent 20 minutes before gathering', 'Monitor', '#FFF0E7', '#C07A59'],
+          ['Conversation prompts', 'Three reflective questions surfaced for the table', 'Curated', '#F4E8D7', '#A8763E']
+        ],
+        meals: [
+          ['Monday', 'Saffron chicken machboos', 'Conversation cue: share one family win from the week.', '91% cohesion lift'],
+          ['Tuesday', 'Lemon herb salmon with freekeh', 'Low-prep evening for Hamad’s late return from work.', 'Balanced'],
+          ['Wednesday', 'Heritage kitchen lamb stew', 'Umm Khalid records the origin story of the recipe.', 'Story capture'],
+          ['Thursday', 'Garden mezze night', 'Saif leads plating with a music-free dining table.', 'Youth-led'],
+          ['Friday', 'Extended family majlis buffet', 'Open home configuration increases elder interaction.', 'Community ready']
+        ],
+        analytics: [
+          ['Shared meals consistency', 88, '#A8763E'],
+          ['Cross-generation dialogue', 76, '#C07A59'],
+          ['Emotional responsiveness', 92, '#1F3A3D']
+        ],
+        badges: [
+          ['Golden Host', 'Hospitality rhythm is above target', '#F4E8D7', '#A8763E'],
+          ['Story Keeper', 'Two heritage moments captured this week', '#F8EFE5', '#C07A59'],
+          ['Calm Table', 'Zero-device dinner ritual completed', '#EEF5F0', '#4E7A5A']
+        ],
+        score: '87 / 100'
+      },
+      hamad: {
+        name: 'Hamad',
+        initials: 'H',
+        role: 'Family Operations Lead',
+        gradient: 'linear-gradient(135deg, #c7d8d8 0%, #6e8f92 100%)',
+        title: 'Sunset Walk & Check-In',
+        overlaySubtitle: 'Movement first, then conversation, with light prompts anchored to the evening breeze.',
+        description: 'Hamad’s mode optimizes around late work arrivals and prefers rituals that decompress the household before deeper discussion, using movement and light structure.',
+        fit: '89% fit',
+        hostLens: 'Hamad is optimizing the evening for calm transition after a full workday.',
+        hostNotes: [
+          'Suggested prompt style is practical and future-focused.',
+          'Conversation intensity is reduced until after the walk is complete.'
+        ],
+        schedule: [
+          ['Transition buffer', '15-minute decompression between arrival and engagement', 'Stable', '#EDF5EE', '#4E7A5A'],
+          ['Walking route', 'Shaded neighborhood loop selected for conversation privacy', 'Ready', '#F4E8D7', '#A8763E'],
+          ['Dinner follow-up', 'Meal moved slightly later to preserve unrushed time', 'Adjusted', '#FFF0E7', '#C07A59']
+        ],
+        meals: [
+          ['Monday', 'Grilled chicken with date glaze', 'Protein-forward menu for an active start to the week.', 'Efficient'],
+          ['Tuesday', 'Baked hammour with citrus rice', 'Minimal prep after commuting hours.', 'Light evening'],
+          ['Wednesday', 'Shared shawarma board', 'Interactive table keeps the mood relaxed.', 'Flexible'],
+          ['Thursday', 'Warm lentil soup and flatbread', 'Designed for a slower night with family reflection.', 'Calm'],
+          ['Friday', 'Majlis carving station', 'A hosting-forward menu for extended guests.', 'Showcase']
+        ],
+        analytics: [
+          ['Schedule resilience', 91, '#1F3A3D'],
+          ['Father-child engagement', 81, '#A8763E'],
+          ['Digital downtime success', 73, '#C07A59']
+        ],
+        badges: [
+          ['Steady Anchor', 'Transition management is excellent', '#EEF2F3', '#1F3A3D'],
+          ['Quiet Strength', 'Household stress dropped after evening walk ritual', '#F4E8D7', '#A8763E'],
+          ['Route Planner', 'Outdoor ritual completion above target', '#FFF0E7', '#C07A59']
+        ],
+        score: '84 / 100'
+      },
+      umm: {
+        name: 'Umm Khalid',
+        initials: 'UK',
+        role: 'Heritage Matriarch',
+        gradient: 'linear-gradient(135deg, #f0dcc7 0%, #b98352 100%)',
+        title: 'Heritage Kitchen Night',
+        overlaySubtitle: 'Food becomes memory architecture, and the recipe becomes a story vessel.',
+        description: 'Umm Khalid’s view elevates oral storytelling, memory capture, and multi-generational participation around recipes, aromas, and family language.',
+        fit: '97% fit',
+        hostLens: 'Umm Khalid is anchoring the evening in family memory and cultural continuity.',
+        hostNotes: [
+          'Story capture priority is elevated during ingredient preparation.',
+          'Youngest family members receive object-based prompts to encourage listening.'
+        ],
+        schedule: [
+          ['Recipe pacing', 'Long-form preparation supports conversation-rich cooking', 'Curated', '#F4E8D7', '#A8763E'],
+          ['Memory prompts', 'Audio archive opens automatically when stirring stage begins', 'Live', '#EDF5EE', '#4E7A5A'],
+          ['Serving ritual', 'Traditional presentation order is suggested at plating', 'Ready', '#FFF0E7', '#C07A59']
+        ],
+        meals: [
+          ['Monday', 'Slow-cooked harees', 'Comfort meal paired with origin stories from childhood.', 'Legacy'],
+          ['Tuesday', 'Vegetable saloona', 'Gentle, family-style serving with shared memories.', 'Nourishing'],
+          ['Wednesday', 'Chicken machboos', 'Flagship ritual for heritage kitchen night.', 'Iconic'],
+          ['Thursday', 'Date cake and karak', 'Tea hour dedicated to old photographs.', 'Tender'],
+          ['Friday', 'Large family rice platter', 'Designed for guests and extended kin.', 'Celebratory']
+        ],
+        analytics: [
+          ['Heritage transmission', 96, '#A8763E'],
+          ['Story capture depth', 89, '#C07A59'],
+          ['Intergenerational participation', 94, '#1F3A3D']
+        ],
+        badges: [
+          ['Keeper of Memory', 'Heritage entries increased this week', '#F4E8D7', '#A8763E'],
+          ['Majlis Elder', 'Conversation leadership recognized by the platform', '#F8EFE5', '#C07A59'],
+          ['Living Archive', 'Three new voice notes preserved', '#EEF5F0', '#4E7A5A']
+        ],
+        score: '95 / 100'
+      },
+      saif: {
+        name: 'Saif',
+        initials: 'S',
+        role: 'Youth Connection Lens',
+        gradient: 'linear-gradient(135deg, #d0d7f1 0%, #7b89c4 100%)',
+        title: 'Gameboard Family Challenge',
+        overlaySubtitle: 'Energy, playful structure, and conversation designed to include younger voices naturally.',
+        description: 'Saif’s lens emphasizes engagement through playful rituals, light competition, and highly visual feedback that keeps younger members invested in family time.',
+        fit: '86% fit',
+        hostLens: 'Saif is helping the platform make family time feel participatory and fresh.',
+        hostNotes: [
+          'Gamified cues outperform traditional reminders for this profile.',
+          'Shared challenge cards increase completion for family rituals.'
+        ],
+        schedule: [
+          ['Energy timing', 'Best ritual window begins after sports practice cooldown', 'Stable', '#EDF5EE', '#4E7A5A'],
+          ['Game round setup', 'Two-minute tabletop challenge inserted before dinner', 'Ready', '#F4E8D7', '#A8763E'],
+          ['Reward signal', 'Progress badge awarded when all members join', 'Track', '#FFF0E7', '#C07A59']
+        ],
+        meals: [
+          ['Monday', 'Chicken sliders and salad cups', 'Quick format keeps the rhythm moving.', 'Youth favorite'],
+          ['Tuesday', 'Pasta with roasted vegetables', 'Simple plate with collaborative serving.', 'Easy'],
+          ['Wednesday', 'Build-your-own wrap station', 'Interactive meal supports conversation playfully.', 'Hands-on'],
+          ['Thursday', 'Soup and mini flatbreads', 'Calmer night before challenge-based ritual.', 'Reset'],
+          ['Friday', 'Dessert voting board', 'Family chooses the sweet course together.', 'Fun']
+        ],
+        analytics: [
+          ['Youth participation', 93, '#1F3A3D'],
+          ['Playful ritual completion', 88, '#A8763E'],
+          ['Attention retention', 79, '#C07A59']
+        ],
+        badges: [
+          ['Bridge Builder', 'Saif increased participation across age groups', '#EEF2F8', '#1F3A3D'],
+          ['Playmaker', 'Family challenge completion is trending upward', '#F4E8D7', '#A8763E'],
+          ['Mood Booster', 'Positive sentiment remained high all week', '#FFF0E7', '#C07A59']
+        ],
+        score: '82 / 100'
+      }
+    };
+
+    let activePersona = 'mariam';
+
+    function createPersonaButton(key, persona) {
+      return `
+        <button
+          class="persona-btn group text-center"
+          data-persona="${key}"
+          aria-label="Switch to ${persona.name}"
+        >
+          <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full border-4 border-transparent bg-white shadow-linen transition-all duration-300" style="background-image:${persona.gradient}">
+            <span class="text-xl font-bold text-white drop-shadow">${persona.initials}</span>
+          </div>
+          <p class="mt-4 text-sm font-semibold text-[#1F3A3D]">${persona.name}</p>
+          <p class="mt-1 text-xs uppercase tracking-[0.2em] text-[#8D857D]">${persona.role}</p>
+        </button>
+      `;
+    }
+
+    function renderPersonas() {
+      const container = document.getElementById('persona-switcher');
+      container.innerHTML = Object.entries(personas).map(([key, persona]) => createPersonaButton(key, persona)).join('');
+
+      container.querySelectorAll('.persona-btn').forEach(button => {
+        button.addEventListener('click', () => switchPersona(button.dataset.persona));
+      });
+
+      syncPersonaActiveState();
+    }
+
+    function syncPersonaActiveState() {
+      document.querySelectorAll('.persona-btn').forEach(button => {
+        const avatar = button.querySelector('div');
+        if (button.dataset.persona === activePersona) {
+          avatar.classList.add('persona-active');
+        } else {
+          avatar.classList.remove('persona-active');
+        }
+      });
+    }
+
+    function renderDashboard() {
+      const persona = personas[activePersona];
+
+      document.getElementById('profile-pill-name').textContent = persona.name;
+      document.querySelector('#profile-pill span').textContent = persona.initials;
+      document.getElementById('hero-title').textContent = persona.title;
+      document.getElementById('hero-overlay-title').textContent = persona.title;
+      document.getElementById('hero-overlay-subtitle').textContent = persona.overlaySubtitle;
+      document.getElementById('hero-description').textContent = persona.description;
+      document.getElementById('forecast-score').textContent = persona.fit;
+      document.getElementById('host-lens').textContent = persona.hostLens;
+      document.getElementById('cohesion-score').textContent = persona.score;
+
+      document.getElementById('host-notes').innerHTML = persona.hostNotes
+        .map(note => `<p>${note}</p>`)
+        .join('');
+
+      document.getElementById('schedule-preview').innerHTML = persona.schedule
+        .map(item => `
+          <div class="flex items-center justify-between rounded-2xl bg-white px-4 py-4">
+            <div>
+              <p class="font-semibold text-[#1F3A3D]">${item[0]}</p>
+              <p class="mt-1 text-sm text-[#7F766E]">${item[1]}</p>
+            </div>
+            <span class="rounded-full px-3 py-1 text-xs font-semibold" style="background:${item[3]}; color:${item[4]};">${item[2]}</span>
+          </div>
+        `)
+        .join('');
+
+      document.getElementById('meal-schedule').innerHTML = persona.meals
+        .map(meal => `
+          <div class="grid gap-4 rounded-[1.5rem] bg-[#FAF6F0] px-5 py-5 md:grid-cols-[0.7fr_1.2fr_0.7fr] md:items-center">
+            <div class="flex items-center gap-3">
+              <span class="flex h-11 w-11 items-center justify-center rounded-full bg-white text-lg">✦</span>
+              <div>
+                <p class="text-sm font-semibold text-[#A8763E]">${meal[0]}</p>
+                <p class="mt-1 text-lg font-semibold text-[#1F3A3D]">${meal[1]}</p>
+              </div>
+            </div>
+            <p class="text-[15px] leading-7 text-[#6D655E]">${meal[2]}</p>
+            <div class="justify-self-start rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#1F3A3D]">${meal[3]}</div>
+          </div>
+        `)
+        .join('');
+
+      document.getElementById('analytics-bars').innerHTML = persona.analytics
+        .map(metric => `
+          <div>
+            <div class="mb-2 flex items-center justify-between">
+              <p class="text-sm font-semibold text-[#1F3A3D]">${metric[0]}</p>
+              <p class="text-sm font-semibold text-[#8D857D]">${metric[1]}%</p>
+            </div>
+            <div class="h-3 rounded-full bg-[#EFE5D8]">
+              <div class="h-3 rounded-full" style="width:${metric[1]}%; background:${metric[2]};"></div>
+            </div>
+          </div>
+        `)
+        .join('');
+
+      document.getElementById('badge-grid').innerHTML = persona.badges
+        .map(badge => `
+          <div class="rounded-[1.5rem] px-5 py-5" style="background:${badge[2]}">
+            <p class="text-sm font-semibold" style="color:${badge[3]}">${badge[0]}</p>
+            <p class="mt-2 text-sm leading-6 text-[#6D655E]">${badge[1]}</p>
+          </div>
+        `)
+        .join('');
+    }
+
+    function switchPersona(name) {
+      activePersona = name;
+      syncPersonaActiveState();
+      renderDashboard();
+    }
+
+    function switchNav(viewName, buttonElement) {
+      document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+      document.getElementById(`${viewName}-view`).classList.add('active');
+
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('tab-active', 'text-[#1F3A3D]', 'font-semibold');
+        tab.classList.add('text-[#9D958B]', 'font-medium');
+      });
+
+      buttonElement.classList.add('tab-active', 'text-[#1F3A3D]', 'font-semibold');
+      buttonElement.classList.remove('text-[#9D958B]', 'font-medium');
+    }
+
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => switchNav(tab.dataset.view, tab));
+    });
+
+    renderPersonas();
+    renderDashboard();
+  </script>
+</body>
+</html>
